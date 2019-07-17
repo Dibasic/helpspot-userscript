@@ -6,6 +6,8 @@ This script provides some formatting and display tweaks for HelpSpot workspaces 
 
 The script as I've made it does the following:
 
+Globally, it gives each page a flatter look by removing some border-radius and gradient properties. (WIP)
+
 On workspace pages:
 
 1. Styles all contents of the workspace table with a monospace font with no underlined headers
@@ -20,7 +22,7 @@ On workspace pages:
 
 6. Hides public update count for requests with only 1 public update to make it easier to see which requests have received a reply
 
-On request pages: the script detects the request page but does not do anything yet.
+There is currently no specific functionality for request pages.
 
 ## Installation
 
