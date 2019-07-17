@@ -18,6 +18,8 @@ On workspace pages:
 
 5. Adds hover text to "Initial Request", "Latest Public Note" and similar fields, allowing a longer preview of the request than just what is displayed
 
+6. Hides public update count for requests with only 1 public update to make it easier to see which requests have received a reply
+
 On request pages: the script detects the request page but does not do anything yet.
 
 ## Installation
@@ -35,6 +37,8 @@ Once installed, the script should automatically update itself when a new version
 5. Click "Install" to confirm when prompted
 
 6. To upgrade the script manually, click the Tampermonkey badge in your browser and then "Check for userscript updates"
+
+7. Configure your filter to take advantage of all features (see **Workspace Setup**)
 
 ## Workspace Setup
 
