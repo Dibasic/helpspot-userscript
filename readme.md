@@ -60,8 +60,8 @@ The script was made to work with my own custom filters. Contact me if you are my
 | `Public Update Count`   | `2`   |
 | `Customer ID`           | `80`  |
 | `Customer`              | `110` |
-| `Initial Request`       | `\*`  |
-| `Latest Public Note`    | `\*`  |
+| `Initial Request`       | `*`   |
+| `Latest Public Note`    | `*`   |
 | `Attachments`           | `16`  |
 | `Latest Public Note By` | `120` |
 
