@@ -13,6 +13,9 @@
 
     var styleFunctions = {};
 
+    var colors = {};
+    var status = {};
+
     function main() {
 
         console.log('HelpSpot page detected. Running styling now.')
@@ -23,6 +26,8 @@
         let pg = match[1] || 'err';
         let arg = match[2] || 'err';
         console.log('> Page: ' + pg + '\n> Argument: ' + arg);
+
+        setColors();
 
         if (pg === 'workspace') {
             workspace();
@@ -48,6 +53,66 @@
             runStyleFunctions();
         }
         setTimeout(startTimer, 1000);
+    }
+
+    function setColors() {
+        // created with colorhexa.com
+        // base color taken from header of HelpSpot with blue theme
+
+        colors.base        = '#70a0d1';
+
+        //colors.comp      = '#d1a170';
+        colors.analog1     = '#70d1d1';
+        //colors.analog2   = '#7170d1';
+        //colors.split1    = '#d17170';
+        //colors.split2    = '#d1d170';
+        colors.triad1      = '#d170a0';
+        //colors.triad2    = '#a0d170';
+        //colors.tetrad    = '#70d1a1';
+
+        //colors.base_d    = '#4986c5';
+        //colors.comp_d    = '#b97b3c';
+        //colors.analog1_d = '#3cb9b9';
+        //colors.analog2_d = '#3d3cb9';
+        colors.split1_d    = '#b93d3c';
+        //colors.split2_d  = '#b9b93c';
+        //colors.triad1_d  = '#b93c7a';
+        colors.triad2_d    = '#7ab93c';
+        //colors.tetrad_d  = '#3cb97b';
+
+        //colors.base_l    = '#97badd';
+        //colors.comp_l    = '#ddba97';
+        //colors.analog1_l = '#97dddd';
+        //colors.analog2_l = '#9797dd';
+        colors.split1_l    = '#dd9797';
+        //colors.split2_l  = '#dddd97';
+        //colors.triad1_l  = '#dd97ba';
+        //colors.triad2_l  = '#badd97';
+        //colors.tetrad_l  = '#97ddba';
+
+        // needed a better yellow, so tried to use existing values
+        colors.conyellow   = '#dddd49';
+
+        // actual color scheme being used
+        colors.brick       = colors.split1_d;
+        colors.blush       = colors.split1_l;
+        colors.lemon       = colors.conyellow;
+        colors.green       = colors.triad2_d;
+        colors.turquoise   = colors.analog1;
+        colors.orchid      = colors.triad1;
+
+        colors.white       = '#f0f0f0';
+        colors.gray_l      = '#e0e0e0';
+        colors.gray_m      = '#a0a0a0';
+        //colors.gray_d    = '#606060';
+        //colors.black     = '#202020';
+
+        status.error       = colors.brick;
+        status.warning     = colors.lemon;
+        status.feature     = colors.turquoise;
+        status.waiting     = colors.blush;
+        status.question    = colors.orchid;
+        status.resolved    = colors.green;
     }
 
     function workspace() {
