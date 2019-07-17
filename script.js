@@ -20,7 +20,7 @@
 
         console.log('HelpSpot page detected. Running styling now.')
         const url = document.URL;
-        const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(workspace|request)&(?:show|reqid)=(\w+)/;
+        const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=([^&]*)(?:&(?:show|reqid)=(\w+))?/;
         const match = url.match(pattern);
 
         let pg = match[1] || 'err';
@@ -29,19 +29,14 @@
 
         setColors();
 
+        global();
+
         if (pg === 'workspace') {
             workspace();
         }
         else if (pg === 'request') {
             request();
         }
-
-        /* Font import */
-        let link = document.createElement('link');
-        link.setAttribute('rel', 'stylesheet');
-        link.setAttribute('type', 'text/css');
-        link.setAttribute('href', 'https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap');
-        document.head.appendChild(link);
 
         runStyleFunctions();
     }
@@ -115,6 +110,105 @@
         status.resolved    = colors.green;
     }
 
+    // global stylings to run in both workspaces and requests
+    function global() {
+        styleFunctions['noradius'] = function() {
+            function styleNoBorder(e) {
+                e.style['border-radius'] = '0';
+                e.style['-webkit-border-radius'] = '0';
+                e.style['-moz-border-radius'] = '0';
+            }
+
+            document.querySelectorAll('.btn').forEach(styleNoBorder);
+        };
+        styleFunctions['nogradient'] = function() {
+            let count = 0;
+            function styleNoGradient(e, flatcolor) {
+                e.style['background'] = flatcolor;
+                count++;
+            }
+
+            styleNoGradient(document.getElementById('hd'), colors.base);
+            styleNoGradient(document.querySelector('#hd table'), colors.base);
+
+            document.querySelectorAll('.btn').forEach(function(e) {
+                styleNoGradient(e, colors.gray_l);
+            });
+            document.querySelectorAll('.btn.theme').forEach(function(e) {
+                styleNoGradient(e, colors.base);
+            });
+
+            document.querySelectorAll('ul.tabs li a').forEach(function(e) {
+                styleNoGradient(e, colors.gray_l);
+            });
+            document.querySelectorAll('ul.tabs li a.active').forEach(function(e) {
+                styleNoGradient(e, colors.base);
+            });
+
+            return count;
+        };
+        styleFunctions['noshadow'] = function() {
+
+            let count = 0;
+            function styleNoShadow(e, bold=false) {
+
+                e.style['text-shadow'] = 'none';
+
+                e.style['box-shadow'] = 'none';
+                e.style['-webkit-box-shadow'] = 'none';
+                e.style['-moz-box-shadow'] = 'none';
+
+                if (bold) {
+                    e.style['font-weight'] = 'bold';
+                }
+
+                count++;
+            }
+
+            document.querySelectorAll('.btn.theme').forEach(function(e) {
+                styleNoShadow(e, true);
+            });
+            document.querySelectorAll('ul.tabs li a').forEach(function(e) {
+                styleNoShadow(e);
+            });
+            document.querySelectorAll('ul.tabs li a.active').forEach(function(e) {
+                styleNoShadow(e, true);
+            });
+
+
+            return count;
+        };
+        // todo move out of stylefunctions, only needs to run once
+        styleFunctions['tabevents'] = function() {
+
+            function tabActivate(e) {
+                let active = e.className === 'active'
+                e.style['background'] = active ? colors.base : colors.gray_l;
+                e.style['font-weight'] = active ? 'bold' : 'normal';
+            }
+
+            function addTabEvent(e) {
+                e.addEventListener("click", function(e) {
+                    let siblings = [];
+                    e.target.parentElement.parentElement.childElements().forEach(function(child) {
+                        child.childElements().forEach(function(grandchild) {
+                            siblings.push(grandchild);
+                        });
+                    });
+                    setTimeout(function() {
+                        siblings.forEach(tabActivate);
+                    }, 50);
+                });
+            }
+
+            let tabs = document.querySelectorAll('ul.tabs li a');
+
+            tabs.forEach(addTabEvent);
+
+            return tabs.length;
+        }
+    }
+
     function workspace() {
 
         function getColumnById(id) {
@@ -126,195 +220,220 @@
             return {header: thead, cells: result};
         }
 
-        styleFunctions = {
-            'table' : function() {
-                let result = document.getElementById('rsgroup_1');
+        styleFunctions['table'] = function() {
+            let result = document.getElementById('rsgroup_1');
 
-                result.style['font-family'] = '"Source Code Pro", "Consolas", monospace';
-                result.style['font-size'] = '14px';
+            result.style['font-family'] = '"Consolas", monospace';
+            result.style['font-size'] = '14px';
 
-                return 1;
+            return 1;
+        };
+        styleFunctions['thead'] = function() {
+            function styleHeadCell(e) {
+                e.style['text-decoration'] = 'none';
             }
-            , 'tHead' : function() {
-                function styleHeadCell(e) {
-                    e.style['text-decoration'] = 'none';
-                }
-                let result = document.querySelectorAll('td[id^="1_table_header_"] a');
-                result.forEach(styleHeadCell);
+            let result = document.querySelectorAll('td[id^="1_table_header_"] a');
+            result.forEach(styleHeadCell);
 
-                return result.length;
-            }
-            , 'category' : function() {
-                const pattern = /^(?:([A-Z]{2,})(?=$| (\d)| Client (Q)| (SOW)| (Mile))|(Impl|Other|Sales|daily\.sh|User Com)).*/
-                , sub = `$1$6 $2$3$4$5`;
+            return result.length;
+        };
+        styleFunctions['category'] = function() {
+            const pattern = /^(?:([A-Z]{2,})(?=$| (\d)| Client (Q)| (SOW)| (Mile))|(Impl|Other|Sales|daily\.sh|User Com)).*/
+            , sub = `$1$6 $2$3$4$5`;
 
-                const s1 = /^[A-Z]{2,} 1/;
-                const s3 = /^[A-Z]{2,} 3/;
-                const mile = /^CAT M/;
+            const product = /^[A-Z]{2,4}$/;
 
-                function styleCategoryCell(e) {
-                    e.title = e.innerText;
-                    const result = e.innerText.replace(pattern, sub);
-                    e.innerText = result;
+            function styleCategoryCell(e) {
+                e.title = e.innerText;
+                const result = e.innerText.replace(pattern, sub);
+                e.innerText = result;
 
-                    if (e.innerText.match(s1)) {
-                        e.style['background-color'] = 'red';
-                        e.style['color'] = 'white';
-                        e.style['font-weight'] = 'bold';
-                    }
-                    else if (e.innerText.match(s3)) {
-                        e.style['background-color'] = 'teal';
-                        e.style['color'] = 'white';
-                    }
-                    else if (e.innerText.match(mile)) {
-                        e.style['background-color'] = 'purple';
-                        e.style['color'] = 'white';
-                    }
-                }
-                let result = getColumnById('1_table_header_sCategory').cells;
-                result.forEach(styleCategoryCell);
-
-                return result.length;
-            }
-            , 'cid' : function() {
-                function styleCidCell(e) {
+                if (e.innerText.endsWith(' 1')) {
+                    e.style['background-color'] = status.error;
+                    e.style['color'] = colors.white;
                     e.style['font-weight'] = 'bold';
                 }
-                let column = getColumnById('1_table_header_sUserId')
-                , header = column.header
-                , result = column.cells;
-
-                if (header) {
-                    header.innerText = 'Client';
+                else if (e.innerText.endsWith(' 2')
+                    || e.innerText.endsWith(' Mile')
+                    || e.innerText === 'CSR/SSL') {
+                    e.style['background-color'] = status.warning;
                 }
-                result.forEach(c => {c.style['font-weight'] = 'bold';});
-
-                return result.length;
+                else if (e.innerText.endsWith(' 3')
+                    || e.innerText.endsWith(' 4')
+                    || e.innerText.endsWith(' SOW')) {
+                    e.style['background-color'] = status.feature;
+                }
+                else if (e.innerText.endsWith(' Q')) {
+                    e.style['background-color'] = status.question;
+                }
+                else if (e.innerText.match(product)
+                    || e.innerText === '-') {
+                    e.style['background-color'] = status.warning;
+                }
+                else if (e.innerText === 'Implementation'
+                    || e.innerText === 'Sales'
+                    || e.innerText === 'Training') {
+                    e.style['background-color'] = status.waiting;
+                }
             }
-            , 'age' : function() {
-                const age = /^(\d{1,2}) ([mhdw])(?:in|our|ay|eek|onth)s?(?:, (\d{1,2}) ([mhdw])(?:in|our|ay|eek|onth)s?)?$/;
-                function formatAge(a) {
-                    let match = a.match(age);
-                    if (!match) {
-                        return a;
-                    }
-                    let result = '';
-                    result += (match[1].length < 2 ? '&nbsp;' : '') + match[1];
-                    result += match[2];
-                    result += ' ';
-                    if (!match[3]) {
-                        return result;
-                    }
-                    result += (match[3].length < 2 ? '&nbsp;' : '') + match[3];
-                    result += match[4];
+            let result = getColumnById('1_table_header_sCategory').cells;
+            result.forEach(styleCategoryCell);
+
+            return result.length;
+        };
+        styleFunctions['cid'] = function() {
+            function styleCidCell(e) {
+                e.style['font-weight'] = 'bold';
+            }
+            let column = getColumnById('1_table_header_sUserId')
+            , header = column.header
+            , result = column.cells;
+
+            if (header) {
+                header.innerText = 'Client';
+            }
+            result.forEach(c => {c.style['font-weight'] = 'bold';});
+
+            return result.length;
+        };
+        styleFunctions['age'] = function() {
+            const age = /^(\d{1,2}) ([mhdw])(?:in|our|ay|eek|onth)s?(?:, (\d{1,2}) ([mhdw])(?:in|our|ay|eek|onth)s?)?$/;
+            function formatAge(a) {
+                let match = a.match(age);
+                if (!match) {
+                    return a;
+                }
+                let result = '';
+                result += (match[1].length < 2 ? '&nbsp;' : '') + match[1];
+                result += match[2];
+                result += ' ';
+                if (!match[3]) {
                     return result;
                 }
-
-                let result = getColumnById('1_table_header_dtGMTOpened').cells;
-                result.forEach(c => {c.innerHTML = formatAge(c.innerText);});
-
-                return result.length;
+                result += (match[3].length < 2 ? '&nbsp;' : '') + match[3];
+                result += match[4];
+                return result;
             }
-            , 'numUpdates' : function() {
-                let result = getColumnById('1_table_header_ctPublicUpdates').cells;
-                result.forEach(c => {
-                    c.innerText = c.innerText === '1' ? '' : c.innerText;
-                    c.style['font-size'] = '14px';
-                    c.style['font-weight'] = 'bold';
-                });
 
-                return result.length;
-            }
-            , 'status' : function() {
-                const pattern = /^(?:Pending (Client Feedback|Internal Info)|Support Rep (Working)|Problem (Solved)|Question (Answered)|(App)ointment( Scheduled| Complete)|Customer (Found Solution|Unreachable)|Passed to (Implementation)|(Sales) Request)$/
-                , sub = `$1$2$3$4$5$6$7$8$9`;
+            let result = getColumnById('1_table_header_dtGMTOpened').cells;
+            result.forEach(c => {c.innerHTML = formatAge(c.innerText);});
 
-                const escalated = /^Esc/;
-                const active = /^Act/;
-                const appt = /^App S/;
-                const jalot = /^JAL/;
-                const sow = /^SOW/;
-                const pcf = /^Client Feed/;
+            return result.length;
+        };
+        styleFunctions['numUpdates'] = function() {
+            let result = getColumnById('1_table_header_ctPublicUpdates').cells;
+            result.forEach(c => {
+                c.innerText = c.innerText === '1' ? '' : c.innerText;
+                c.style['font-size'] = '14px';
+                c.style['font-weight'] = 'bold';
+            });
 
-                function styleStatusCell(e) {
-                    e.title = e.innerText;
-                    const result = e.innerText.replace(pattern, sub);
-                    e.innerText = result;
+            return result.length;
+        };
+        styleFunctions['status'] = function() {
+            const pattern = /^(?:Pending (Client Feedback|Internal Info)|Support Rep (Working)|Problem (Solved)|Question (Answered)|(App)ointment( Scheduled| Complete)|Customer (Found Solution|Unreachable)|Passed to (Implementation)|(Sales) Request)$/
+            , sub = `$1$2$3$4$5$6$7$8$9`;
 
-                    if (e.innerText.match(escalated)) {
-                        e.style['background-color'] = 'red';
-                        e.style['color'] = 'white';
-                        e.style['font-weight'] = 'bold';
-                    }
-                    if (e.innerText.match(active) || e.innerText.match(appt)) {
-                        e.style['background-color'] = 'yellow';
-                        e.style['font-weight'] = 'bold';
-                    }
-                    else if (e.innerText.match(jalot) || e.innerText.match(sow)) {
-                        e.style['background-color'] = 'aqua';
-                    }
-                    else if (e.innerText.match(pcf)) {
-                        e.style['background-color'] = 'lime';
-                    }
-                }
-                let result = getColumnById('1_table_header_sStatus').cells;
-                result.forEach(styleStatusCell);
+            function styleStatusCell(e) {
+                e.title = e.innerText;
+                const result = e.innerText.replace(pattern, sub);
+                e.innerText = result;
 
-                return result.length;
-            }
-            , 'email' : function() {
-                let column = getColumnById('1_table_header_sEmail')
-                , header = column.header
-                , result = column.cells;
-
-                if (header) {
-                    header.innerText = 'email domain';
-                }
-
-                const pattern = /^.+?(@.+)$/;
-                result.forEach(e => {
-                    e.title = e.innerText;
-                    let match = e.innerText.match(pattern);
-                    e.innerText = match && match[1] || e.innerText;
-                });
-
-                return result.length;
-            }
-            , 'request' : function() {
-                function styleRequestCell(e) {
-                    setHoverText(e);
-                    setFontSize(e);
-                }
-
-                function setHoverText(e) {
-                    e.title = e.innerText;
-                }
-
-                function setFontSize(e) {
-                    e.style['font-size'] = '11px';
-                }
-
-                let result = document.querySelectorAll('td.js-request');
-                result.forEach(styleRequestCell);
-
-                return result.length;
-            }
-            , 'inboxLabel' : function() {
-                function styleInboxLabelCell(e) {
-                    if (e.innerText.startsWith('Courseleaf ')) {
-                        e.innerText = e.innerText.substring(11);
-                        if (e.innerText === 'FocusSearch') {
-                            e.innerText = 'FSearch';
-                        }
-                    }
-                    e.style['font-size'] = '14px';
+                if (e.innerText === 'Escalated') {
+                    e.style['background-color'] = status.error;
+                    e.style['color'] = colors.white;
                     e.style['font-weight'] = 'bold';
                 }
-                let result = document.querySelectorAll('span.color-label');
-                result.forEach(styleInboxLabelCell);
-
-                return result.length;
+                else if (e.innerText === 'Active'
+                    || e.innerText === 'App Scheduled'
+                    || e.innerText === 'Working') {
+                    e.style['background-color'] = status.warning;
+                    e.style['font-weight'] = 'bold';
+                }
+                else if (e.innerText.startsWith('JAL')
+                    || e.innerText === 'Internal Info'
+                    || e.innerText === 'Assessment'
+                    || e.innerText === 'SOW') {
+                    e.style['background-color'] = status.feature;
+                }
+                else if (e.innerText === 'Client Feedback'
+                    || e.innerText === 'Found Solution'
+                    || e.innerText === 'App Complete'
+                    || e.innerText === 'Answered'
+                    || e.innerText === 'Solved') {
+                    e.style['background-color'] = status.resolved;
+                }
+                else if (e.innerText === 'Stale'
+                    || e.innerText === 'Implementation'
+                    || e.innerText === 'Sales'
+                    || e.innerText === 'Not Supported') {
+                    e.style['background-color'] = status.waiting;
+                }
+                else if (e.innerText.endsWith(' Only')
+                    || e.innerText.endsWith(' Logs')
+                    || e.innerText === 'OOTO Only'
+                    || e.innerText === 'Unreachable'
+                    || e.innerText === 'SPAM') {
+                    e.style['background-color'] = colors.gray_m;
+                }
             }
+            let result = getColumnById('1_table_header_sStatus').cells;
+            result.forEach(styleStatusCell);
+
+            return result.length;
+        };
+        styleFunctions['email'] = function() {
+            let column = getColumnById('1_table_header_sEmail')
+            , header = column.header
+            , result = column.cells;
+
+            if (header) {
+                header.innerText = 'email domain';
+            }
+
+            const pattern = /^.+?(@.+)$/;
+            result.forEach(e => {
+                e.title = e.innerText;
+                let match = e.innerText.match(pattern);
+                e.innerText = match && match[1] || e.innerText;
+            });
+
+            return result.length;
+        };
+        styleFunctions['request'] = function() {
+            function styleRequestCell(e) {
+                setHoverText(e);
+                setFontSize(e);
+            }
+
+            function setHoverText(e) {
+                e.title = e.innerText;
+            }
+
+            function setFontSize(e) {
+                e.style['font-size'] = '11px';
+            }
+
+            let result = document.querySelectorAll('td.js-request');
+            result.forEach(styleRequestCell);
+
+            return result.length;
+        };
+        styleFunctions['inboxlabel'] = function() {
+            function styleInboxLabelCell(e) {
+                if (e.innerText.startsWith('Courseleaf ')) {
+                    e.innerText = e.innerText.substring(11);
+                    if (e.innerText === 'FocusSearch') {
+                        e.innerText = 'FSearch';
+                    }
+                }
+                e.style['font-size'] = '14px';
+                e.style['font-weight'] = 'bold';
+            }
+            let result = document.querySelectorAll('span.color-label');
+            result.forEach(styleInboxLabelCell);
+
+            return result.length;
         };
 
         console.log('> Workspace view detected. Applying workspace styling.');
