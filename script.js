@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.61
+// @version      0.62
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request)&(?:show|reqid)=(\w+)/
@@ -88,6 +88,7 @@
                 const mile = /^CAT M/;
 
                 function styleCategoryCell(e) {
+                    e.title = e.innerText;
                     const result = e.innerText.replace(pattern, sub);
                     e.innerText = result;
 
@@ -171,6 +172,7 @@
                 const pcf = /^Client Feed/;
 
                 function styleStatusCell(e) {
+                    e.title = e.innerText;
                     const result = e.innerText.replace(pattern, sub);
                     e.innerText = result;
 
