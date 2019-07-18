@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.71
+// @version      0.72
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request)&(?:show|reqid)=(\w+)/
@@ -88,7 +88,7 @@
         // needed a better yellow, so tried to use existing values
         colors.conyellow   = '#dddd49';
 
-        colors.white       = '#f0f0f0';
+        colors.white       = '#ffffff';
         colors.gray_l      = '#e0e0e0';
         colors.gray_m      = '#a0a0a0';
         //colors.gray_d    = '#606060';
@@ -254,6 +254,7 @@
                     || e.innerText.endsWith(' 4')
                     || e.innerText.endsWith(' SOW')) {
                     e.style['background-color'] = status.feature;
+                    e.style['color'] = color.white;
                 }
                 else if (e.innerText.endsWith(' Q')) {
                     e.style['background-color'] = status.question;
@@ -347,6 +348,7 @@
                     || e.innerText === 'Assessment'
                     || e.innerText === 'SOW') {
                     e.style['background-color'] = status.feature;
+                    e.style['color'] = colors.white;
                 }
                 else if (e.innerText === 'Client Feedback'
                     || e.innerText === 'Found Solution'
