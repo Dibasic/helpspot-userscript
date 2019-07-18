@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.70
+// @version      0.71
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request)&(?:show|reqid)=(\w+)/
@@ -53,11 +53,11 @@
     function setColors() {
         // created with colorhexa.com
         // base color taken from header of HelpSpot with blue theme
+        // suggest using a color highlighter if you edit these
 
         colors.base        = '#70a0d1';
-
         //colors.comp      = '#d1a170';
-        colors.analog1     = '#70d1d1';
+        //colors.analog1   = '#70d1d1';
         //colors.analog2   = '#7170d1';
         //colors.split1    = '#d17170';
         //colors.split2    = '#d1d170';
@@ -84,17 +84,9 @@
         //colors.triad1_l  = '#dd97ba';
         //colors.triad2_l  = '#badd97';
         //colors.tetrad_l  = '#97ddba';
-
+        
         // needed a better yellow, so tried to use existing values
         colors.conyellow   = '#dddd49';
-
-        // actual color scheme being used
-        colors.brick       = colors.split1_d;
-        colors.blush       = colors.split1_l;
-        colors.lemon       = colors.conyellow;
-        colors.green       = colors.triad2_d;
-        colors.turquoise   = colors.analog1;
-        colors.orchid      = colors.triad1;
 
         colors.white       = '#f0f0f0';
         colors.gray_l      = '#e0e0e0';
@@ -102,12 +94,12 @@
         //colors.gray_d    = '#606060';
         //colors.black     = '#202020';
 
-        status.error       = colors.brick;
-        status.warning     = colors.lemon;
-        status.feature     = colors.turquoise;
-        status.waiting     = colors.blush;
-        status.question    = colors.orchid;
-        status.resolved    = colors.green;
+        status.error       = colors.split1_d;   // #b93d3c
+        status.warning     = colors.conyellow;  // #dddd49
+        status.feature     = colors.base;       // #70a0d1
+        status.waiting     = colors.split1_l;   // #dd9797
+        status.question    = colors.triad1;     // #d170a0
+        status.resolved    = colors.triad2_d;   // #7ab93c
     }
 
     // global stylings to run in both workspaces and requests
