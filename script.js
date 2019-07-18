@@ -254,7 +254,6 @@
                     || e.innerText.endsWith(' 4')
                     || e.innerText.endsWith(' SOW')) {
                     e.style['background-color'] = status.feature;
-                    e.style['color'] = color.white;
                 }
                 else if (e.innerText.endsWith(' Q')) {
                     e.style['background-color'] = status.question;
@@ -348,7 +347,6 @@
                     || e.innerText === 'Assessment'
                     || e.innerText === 'SOW') {
                     e.style['background-color'] = status.feature;
-                    e.style['color'] = colors.white;
                 }
                 else if (e.innerText === 'Client Feedback'
                     || e.innerText === 'Found Solution'
