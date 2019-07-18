@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.72
+// @version      0.73
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request)&(?:show|reqid)=(\w+)/
@@ -123,14 +123,14 @@
             styleNoGradient(document.getElementById('hd'), colors.base);
             styleNoGradient(document.querySelector('#hd table'), colors.base);
 
-            document.querySelectorAll('.btn').forEach(function(e) {
+            document.querySelectorAll('.btn:not(.theme)').forEach(function(e) {
                 styleNoGradient(e, colors.gray_l);
             });
             document.querySelectorAll('.btn.theme').forEach(function(e) {
                 styleNoGradient(e, colors.base);
             });
 
-            document.querySelectorAll('ul.tabs li a').forEach(function(e) {
+            document.querySelectorAll('ul.tabs li a:not(.active)').forEach(function(e) {
                 styleNoGradient(e, colors.gray_l);
             });
             document.querySelectorAll('ul.tabs li a.active').forEach(function(e) {
@@ -139,6 +139,17 @@
 
             return count;
         };
+        styleFunctions['noborder'] = function() {
+            let count = 0;
+            function styleNoBorder(e) {
+                e.style['border'] = 'none';
+                count++;
+            }
+
+            document.querySelectorAll('.btn').forEach(styleNoBorder);
+
+            return count;
+        }
         styleFunctions['noshadow'] = function() {
 
             let count = 0;
@@ -157,10 +168,13 @@
                 count++;
             }
 
+            document.querySelectorAll('.btn:not(.theme)').forEach(function(e) {
+                styleNoShadow(e);
+            });
             document.querySelectorAll('.btn.theme').forEach(function(e) {
                 styleNoShadow(e, true);
             });
-            document.querySelectorAll('ul.tabs li a').forEach(function(e) {
+            document.querySelectorAll('ul.tabs li a:not(.active)').forEach(function(e) {
                 styleNoShadow(e);
             });
             document.querySelectorAll('ul.tabs li a.active').forEach(function(e) {
@@ -180,7 +194,7 @@
             }
 
             function addTabEvent(e) {
-                e.addEventListener("click", function(e) {
+                e.addEventListener('click', function(e) {
                     let siblings = [];
                     e.target.parentElement.parentElement.childElements().forEach(function(child) {
                         child.childElements().forEach(function(grandchild) {
