@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.80
+// @version      0.81
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
-// @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request)&(?:show|reqid)=(\w+)/
+// @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
 // @grant        none
 // ==/UserScript==
 
