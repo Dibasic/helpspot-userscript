@@ -106,6 +106,74 @@
         status.resolved    = colors.triad2_d;   // #7ab93c
     }
 
+    function cssParse(cssText) {
+        const pattern = /\s*([^\s:]*):\s*([^;]*);?/gm;
+        let rules = [];
+        let match;
+        while ((match = pattern.exec(cssText)) !== null) {
+            if (match.index === pattern.lastIndex) {
+                pattern.lastIndex++;
+            }
+            rules.push(match);
+        }
+        return rules;
+    }
+
+    function styleApply(element, rules) {
+        const important = /(.*?)\s*?!important\s*$/;
+        const importantSub = '$1';
+        rules.forEach(function(rule) {
+            if (rule[2].match(important)) {
+                element.style.setProperty(rule[1], rule[2].replace(important, importantSub), 'important');
+            }
+            else {
+                element.style.setProperty(rule[1], rule[2]);
+            }
+        });
+    }
+
+    function styleSelectorAll(selector, cssText) {
+        const rules = cssParse(cssText);
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(e => styleApply(e, rules));
+        return elements.length;
+    }
+
+    function styleSelector(selector, cssText) {
+        const element = document.querySelector(selector);
+        if (element) {
+            const rules = cssParse(cssText);
+            styleApply(element, rules);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    function styleElementById(id, cssText) {
+        const element = document.getElementById(id);
+        if (element) {
+            const rules = cssParse(cssText);
+            styleApply(element, rules);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    function styleElement(element, cssText) {
+        const rules = cssParse(cssText);
+        if (element) {
+            styleApply(element, rules);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
     // global stylings to run in both workspaces and requests
     function global() {
         styleFunctions['noradius'] = function() {
