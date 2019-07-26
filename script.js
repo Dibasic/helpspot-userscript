@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.81
+// @version      0.90
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
@@ -18,10 +18,13 @@
     var styleFunctions = {};
     var eventFunctions = {};
 
+    var storage = {};
+
     var colors = {};
     var status = {};
 
     function main() {
+        readStorage();
 
         console.log('HelpSpot page detected. Running styling now.');
         const url = document.URL;
@@ -174,6 +177,34 @@
         else {
             return 0;
         }
+    }
+
+    function getId(element) {
+        // substring for everything after "viewing-"
+        return [...element.parentElement.childNodes][0].id.substring(8);
+    }
+
+    function getCustomStatus(id) {
+        return storage[id];
+    }
+
+    function setCustomStatus(id, status) {
+        storage[id] = status;
+        writeStorage();
+    }
+
+    function readStorage() {
+        let item = localStorage.getItem('hsreq');
+        if (item) {
+            storage = JSON.parse(item);
+        }
+        else {
+            localStorage.setItem('hsreq', '{}');
+        }
+    }
+
+    function writeStorage() {
+        localStorage.setItem('hsreq', JSON.stringify(storage));
     }
 
     // global stylings to run in both workspaces and requests
@@ -415,7 +446,17 @@
             , sub = '$1$2$3$4$5$6$7$8$9';
 
             function styleStatusCell(e) {
-                e.title = e.innerText;
+                if (!e.title) {
+                    let status = getCustomStatus(getId(e))
+                    if (status) {
+                        e.title = status;
+                        styleElement(e, 'text-decoration: underline; text-decoration-style: dotted');
+                    }
+                    else {
+                        e.title = e.innerText;
+                    }
+                }
+
                 const result = e.innerText.replace(pattern, sub);
                 e.innerText = result;
 
@@ -456,9 +497,28 @@
                     || e.innerText === 'SPAM') {
                     e.style['background-color'] = colors.gray_m;
                 }
+
+                styleElement(e, 'cursor: pointer');
             }
             let result = getColumnById('1_table_header_sStatus').cells;
             result.forEach(styleStatusCell);
+
+            return result.length;
+        };
+        eventFunctions['status'] = function() {
+            function addStatusEvent(e) {
+                e.addEventListener('click', function() {
+                    let customStatus = prompt('Custom status to show');
+                    if (customStatus) {
+                        setCustomStatus(getId(e), customStatus);
+                        e.title = customStatus;
+                        styleElement(e, 'text-decoration: underline; text-decoration-style: dotted');
+                    }
+                });
+            }
+
+            let result = getColumnById('1_table_header_sStatus').cells;
+            result.forEach(addStatusEvent);
 
             return result.length;
         };
