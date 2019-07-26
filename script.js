@@ -16,6 +16,7 @@
     'use strict';
 
     var styleFunctions = {};
+    var eventFunctions = {};
 
     var colors = {};
     var status = {};
@@ -43,6 +44,7 @@
         }
 
         runStyleFunctions();
+        runEventFunctions();
     }
 
     function startTimer() {
@@ -84,9 +86,9 @@
         //colors.analog1_l = '#97dddd';
         //colors.analog2_l = '#9797dd';
         colors.split1_l    = '#dd9797';
-        //colors.split2_l  = '#dddd97';
+        colors.split2_l    = '#dddd97';
         //colors.triad1_l  = '#dd97ba';
-        //colors.triad2_l  = '#badd97';
+        colors.triad2_l    = '#badd97';
         //colors.tetrad_l  = '#97ddba';
 
         // needed a better yellow, so tried to use existing values
@@ -519,11 +521,42 @@
     }
 
     function request() {
+        eventFunctions['reqbuttons'] = function() {
+            function addRequestButtonEvent(e) {
+                e.addEventListener('click', styleFunctions['reqbuttons']);
+            }
+            document.querySelectorAll('.request-sub-note-box > button').forEach(addRequestButtonEvent);
+        };
+
+        
+
+        styleFunctions['reqbuttons'] = function() {
+            console.log('running!');
+            styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${colors.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
+            let color;
+            if (1 == styleSelector('#button-public.btn-request-public',     `background: ${colors.triad2_d} !important; font-weight: bold !important`)) {
+                color = colors.triad2_d;
+            }
+            else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${colors.split1_d} !important; font-weight: bold !important`)) {
+                color = colors.split1_d;
+            }
+            else if (1 == styleSelector('#button-external.btn-request-external', `background: ${colors.split2_l} !important; font-weight: bold !important`)) {
+                color = colors.split2_l;
+            }
+            styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${colors.gray_l}`);
+            styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important`)
+            return 5;
+        };
+
         console.log('> Request view detected. Applying request styling.');
     }
 
     function runStyleFunctions() {
         Object.keys(styleFunctions).forEach(f => console.log('> > ' + f + ' updated ' + styleFunctions[f].call()) + ' elements');
+    }
+
+    function runEventFunctions() {
+        Object.keys(eventFunctions).forEach(f => console.log('> > ' + f + ' created event for ' + eventFunctions[f].call()) + ' elements');
     }
 
     main();
