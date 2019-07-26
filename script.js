@@ -8,6 +8,10 @@
 // @grant        none
 // ==/UserScript==
 
+/*  jshint esversion: 6
+  , laxcomma: true
+  , laxbreak: true
+  , -W069 */
 (function() {
     'use strict';
 
@@ -18,7 +22,7 @@
 
     function main() {
 
-        console.log('HelpSpot page detected. Running styling now.')
+        console.log('HelpSpot page detected. Running styling now.');
         const url = document.URL;
         const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=([^&]*)(?:&(?:show|reqid)=(\w+))?/;
         const match = url.match(pattern);
@@ -84,7 +88,7 @@
         //colors.triad1_l  = '#dd97ba';
         //colors.triad2_l  = '#badd97';
         //colors.tetrad_l  = '#97ddba';
-        
+
         // needed a better yellow, so tried to use existing values
         colors.conyellow   = '#dddd49';
 
@@ -188,7 +192,7 @@
         styleFunctions['tabevents'] = function() {
 
             function tabActivate(e) {
-                let active = e.className === 'active'
+                let active = e.className === 'active';
                 e.style['background'] = active ? colors.base : colors.gray_l;
                 e.style['font-weight'] = active ? 'bold' : 'normal';
             }
@@ -212,7 +216,7 @@
             tabs.forEach(addTabEvent);
 
             return tabs.length;
-        }
+        };
     }
 
     function workspace() {
@@ -245,7 +249,7 @@
         };
         styleFunctions['category'] = function() {
             const pattern = /^(?:([A-Z]{2,})(?=$| (\d)| Client (Q)| (SOW)| (Mile))|(Impl|Other|Sales|daily\.sh|User Com)).*/
-            , sub = `$1$6 $2$3$4$5`;
+            , sub = '$1$6 $2$3$4$5';
 
             const product = /^[A-Z]{2,4}$/;
 
@@ -338,7 +342,7 @@
         };
         styleFunctions['status'] = function() {
             const pattern = /^(?:Pending (Client Feedback|Internal Info)|Support Rep (Working)|Problem (Solved)|Question (Answered)|(App)ointment( Scheduled| Complete)|Customer (Found Solution|Unreachable)|Passed to (Implementation)|(Sales) Request)$/
-            , sub = `$1$2$3$4$5$6$7$8$9`;
+            , sub = '$1$2$3$4$5$6$7$8$9';
 
             function styleStatusCell(e) {
                 e.title = e.innerText;
