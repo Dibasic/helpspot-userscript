@@ -10,17 +10,19 @@ Globally, it gives each page a flatter look by removing some border-radius and g
 
 On workspace pages:
 
-1. Styles all contents of the workspace table with a monospace font with no underlined headers
+1. Allows you to create persistent notes as hover text over request status
 
-2. Shortens and color-codes some request categories, statuses, and inbox labels
+2. Styles all contents of the workspace table with a monospace font with no underlined headers
 
-3. Displays only the domain of client email addresses, and bolds client emails and IDs
+3. Shortens and color-codes some request categories, statuses, and inbox labels
 
-4. Shortens request ages by reformatting `## hours, ## minutes` to `##h ##m` and left-pads single-digit numbers to align places vertically (supports `min`, `hour`, `day`, `week`, `month` units)
+4. Displays only the domain of client email addresses, and bolds client emails and IDs
 
-5. Adds hover text to "Initial Request", "Latest Public Note" and similar fields, allowing a longer preview of the request than just what is displayed
+5. Shortens request ages by reformatting `## hours, ## minutes` to `##h ##m` and left-pads single-digit numbers to align places vertically (supports `min`, `hour`, `day`, `week`, `month` units)
 
-6. Hides public update count for requests with only 1 public update to make it easier to see which requests have received a reply
+6. Adds hover text to "Initial Request", "Latest Public Note" and similar fields, allowing a longer preview of the request than just what is displayed
+
+7. Hides public update count for requests with only 1 public update to make it easier to see which requests have received a reply
 
 There is currently no specific functionality for request pages.
 
