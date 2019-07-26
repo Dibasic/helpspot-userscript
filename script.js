@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.73
+// @version      0.80
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request)&(?:show|reqid)=(\w+)/
@@ -223,7 +223,7 @@
             document.querySelectorAll('.btn').forEach(styleNoBorder);
 
             return count;
-        }
+        };
         styleFunctions['noshadow'] = function() {
 
             let count = 0;
@@ -544,7 +544,7 @@
                 color = colors.split2_l;
             }
             styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${colors.gray_l}`);
-            styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important`)
+            styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important`);
             return 5;
         };
 
