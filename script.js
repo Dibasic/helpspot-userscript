@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.90
+// @version      0.91
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
@@ -21,7 +21,6 @@
     var storage = {};
 
     var colors = {};
-    var status = {};
 
     function main() {
         readStorage();
@@ -103,12 +102,16 @@
         //colors.gray_d    = '#606060';
         //colors.black     = '#202020';
 
-        status.error       = colors.split1_d;   // #b93d3c
-        status.warning     = colors.conyellow;  // #dddd49
-        status.feature     = colors.base;       // #70a0d1
-        status.waiting     = colors.split1_l;   // #dd9797
-        status.question    = colors.triad1;     // #d170a0
-        status.resolved    = colors.triad2_d;   // #7ab93c
+        colors.error       = colors.split1_d;   // #b93d3c
+        colors.warning     = colors.conyellow;  // #dddd49
+        colors.feature     = colors.base;       // #70a0d1
+        colors.waiting     = colors.split1_l;   // #dd9797
+        colors.question    = colors.triad1;     // #d170a0
+        colors.resolved    = colors.triad2_d;   // #7ab93c
+
+        colors.pub         = colors.triad2_d;   // #7ab93c
+        colors.prv         = colors.split1_d;   // #b93d3c
+        colors.ext         = colors.split2_l;   // #dddd97
     }
 
     function cssParse(cssText) {
@@ -360,31 +363,31 @@
                 e.innerText = result;
 
                 if (e.innerText.endsWith(' 1')) {
-                    e.style['background-color'] = status.error;
+                    e.style['background-color'] = colors.error;
                     e.style['color'] = colors.white;
                     e.style['font-weight'] = 'bold';
                 }
                 else if (e.innerText.endsWith(' 2')
                     || e.innerText.endsWith(' Mile')
                     || e.innerText === 'CSR/SSL') {
-                    e.style['background-color'] = status.warning;
+                    e.style['background-color'] = colors.warning;
                 }
                 else if (e.innerText.endsWith(' 3')
                     || e.innerText.endsWith(' 4')
                     || e.innerText.endsWith(' SOW')) {
-                    e.style['background-color'] = status.feature;
+                    e.style['background-color'] = colors.feature;
                 }
                 else if (e.innerText.endsWith(' Q')) {
-                    e.style['background-color'] = status.question;
+                    e.style['background-color'] = colors.question;
                 }
                 else if (e.innerText.match(product)
                     || e.innerText === '-') {
-                    e.style['background-color'] = status.warning;
+                    e.style['background-color'] = colors.warning;
                 }
                 else if (e.innerText === 'Implementation'
                     || e.innerText === 'Sales'
                     || e.innerText === 'Training') {
-                    e.style['background-color'] = status.waiting;
+                    e.style['background-color'] = colors.waiting;
                 }
             }
             let result = getColumnById('1_table_header_sCategory').cells;
@@ -461,34 +464,34 @@
                 e.innerText = result;
 
                 if (e.innerText === 'Escalated') {
-                    e.style['background-color'] = status.error;
+                    e.style['background-color'] = colors.error;
                     e.style['color'] = colors.white;
                     e.style['font-weight'] = 'bold';
                 }
                 else if (e.innerText === 'Active'
                     || e.innerText === 'App Scheduled'
                     || e.innerText === 'Working') {
-                    e.style['background-color'] = status.warning;
+                    e.style['background-color'] = colors.warning;
                     e.style['font-weight'] = 'bold';
                 }
                 else if (e.innerText.startsWith('JAL')
                     || e.innerText === 'Internal Info'
                     || e.innerText === 'Assessment'
                     || e.innerText === 'SOW') {
-                    e.style['background-color'] = status.feature;
+                    e.style['background-color'] = colors.feature;
                 }
                 else if (e.innerText === 'Client Feedback'
                     || e.innerText === 'Found Solution'
                     || e.innerText === 'App Complete'
                     || e.innerText === 'Answered'
                     || e.innerText === 'Solved') {
-                    e.style['background-color'] = status.resolved;
+                    e.style['background-color'] = colors.resolved;
                 }
                 else if (e.innerText === 'Stale'
                     || e.innerText === 'Implementation'
                     || e.innerText === 'Sales'
                     || e.innerText === 'Not Supported') {
-                    e.style['background-color'] = status.waiting;
+                    e.style['background-color'] = colors.waiting;
                 }
                 else if (e.innerText.endsWith(' Only')
                     || e.innerText.endsWith(' Logs')
@@ -594,18 +597,50 @@
             console.log('running!');
             styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${colors.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
             let color;
-            if (1 == styleSelector('#button-public.btn-request-public',     `background: ${colors.triad2_d} !important; font-weight: bold !important`)) {
-                color = colors.triad2_d;
+            if (1 == styleSelector('#button-public.btn-request-public',     `background: ${colors.pub} !important; font-weight: bold !important`)) {
+                color = colors.pub;
             }
-            else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${colors.split1_d} !important; font-weight: bold !important`)) {
-                color = colors.split1_d;
+            else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${colors.prv} !important; font-weight: bold !important`)) {
+                color = colors.prv;
             }
-            else if (1 == styleSelector('#button-external.btn-request-external', `background: ${colors.split2_l} !important; font-weight: bold !important`)) {
-                color = colors.split2_l;
+            else if (1 == styleSelector('#button-external.btn-request-external', `background: ${colors.ext} !important; font-weight: bold !important`)) {
+                color = colors.ext;
             }
             styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${colors.gray_l}`);
             styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important`);
             return 5;
+        };
+
+        styleFunctions['notestream'] = function() {
+
+            let attempts = 0;
+            function detectNoteStream() {
+                setTimeout(function() {
+                    if ([...document.querySelectorAll('.note-label')].length > 0) {
+                        styleNoteStream();
+                    }
+                    else if (++attempts < 10) {
+                        detectNoteStream();
+                    }
+                    else {
+                        console.log('Maximum attempts for notestream reached. Aborting notestream style function.');
+                    }
+                }, 500);
+            }
+
+            function styleNoteStream() {
+                styleSelectorAll('.note-label', `border-radius: none; font-weight: bold`);
+
+                styleSelectorAll('.label-public', `background-color: ${colors.pub}; color: ${colors.white}`);
+                styleSelectorAll('.label-private', `background-color: ${colors.prv}; color: ${colors.white}`);
+                styleSelectorAll('.label-external', `background-color: ${colors.ext}; color: ${colors.black}`);
+
+                styleSelectorAll('.note-stream-item-public > div.note-stream-item-inner-wrap', `border-right-color: ${colors.pub}`);
+                styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${colors.prv}`);
+                styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${colors.ext}`);    
+            }
+
+            detectNoteStream();
         };
 
         console.log('> Request view detected. Applying request styling.');
