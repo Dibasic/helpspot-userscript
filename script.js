@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.91
+// @version      0.92
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
@@ -590,6 +590,18 @@
             }
             document.querySelectorAll('.request-sub-note-box > button').forEach(addRequestButtonEvent);
         };
+
+        eventFunctions['tabreset'] = function() {
+            document.querySelector('a[href^="#livelookup"]').addEventListener('click', function() {
+                setTimeout(function() {
+                    document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').addEventListener('click', function() {
+                        setTimeout(function() {
+                            document.querySelector('a[href^="#customer"]').click();
+                        }, 200);
+                    });
+                }, 1900);
+            })
+        }
 
         eventFunctions['inboxselect'] = function() {
             let inbox = document.getElementById('Custom22');
