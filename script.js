@@ -591,10 +591,31 @@
             document.querySelectorAll('.request-sub-note-box > button').forEach(addRequestButtonEvent);
         };
 
-        
+        eventFunctions['inboxselect'] = function() {
+            let inbox = document.getElementById('Custom22');
+            if (!inbox.value) {
+                inbox.value = inbox.options[1].value;
+            }
+            let category = document.getElementById('xCategory');
+            if (!category.value) {
+                category.value = 41; //cat
+            }
+            let cid = document.getElementById('sUserId');
+            if (!cid.value) {
+                let email = document.getElementById('sEmail').value;
+                let pattern = /.+?@(.+\.)?([^\.]+)\.([^\.]+)$/;
+                let match = email.match(pattern);
+                cid.value = match[2] + (match[3] != 'edu' ? '-' + match[2] : '');
+
+                // run the live lookup
+                document.querySelector('a[href^="#livelookup"]').click();
+                setTimeout(function() {
+                    document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
+                }, 2000);
+            }
+        };
 
         styleFunctions['reqbuttons'] = function() {
-            console.log('running!');
             styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${colors.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
             let color;
             if (1 == styleSelector('#button-public.btn-request-public',     `background: ${colors.pub} !important; font-weight: bold !important`)) {
