@@ -24,7 +24,9 @@ On workspace pages:
 
 7. Hides public update count for requests with only 1 public update to make it easier to see which requests have received a reply
 
-There is currently no specific functionality for request pages.
+On request pages:
+
+1. Automatically perform new request actions: give a default inbox, perform live lookup, give a default category, and undo automatic self-assign
 
 ## Installation
 
