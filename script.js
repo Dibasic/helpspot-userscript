@@ -215,8 +215,8 @@
         let attempts = 0;
         function attempt() {
             setTimeout(function() {
-                if (condition.call()) {
-                    predicate.call();
+                if (condition()) {
+                    predicate();
                 }
                 else if (attempts++ < maxAttempts) {
                     attempt();
