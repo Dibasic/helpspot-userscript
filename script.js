@@ -54,8 +54,9 @@
         if (!loading.style.cssText.includes('display: none')) {
             console.log('detecting loading message - running runStyleFunctions()');
             runStyleFunctions();
+            loading.style['display'] = 'none';
         }
-        setTimeout(startTimer, 1000);
+        setTimeout(startTimer, 200);
     }
 
     function setColors() {
