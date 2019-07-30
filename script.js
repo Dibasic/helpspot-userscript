@@ -210,6 +210,29 @@
         localStorage.setItem('hsreq', JSON.stringify(storage));
     }
 
+    // Wait until condition returns true, then run predicate
+    function waitUntil(condition, delay = 500, maxAttempts = 10, predicate) {
+        let attempts = 0;
+        function attempt() {
+            setTimeout(function() {
+                if (condition.call()) {
+                    predicate.call();
+                }
+                else if (attempts++ < maxAttempts) {
+                    attempt();
+                }
+                else {
+                    console.log('> Maximum attempts reached:');
+                    console.log(`> > condition: ${condition.name} (currently: ${typeof condition} ${condition.call()})`);
+                    console.log('> > delay per attempt: ' + delay);
+                    console.log('> > attempts taken: ' + attempts);
+                    console.log('> > predicate: ' + predicate.name);
+                }
+            });
+        }
+        attempt();
+    }
+
     // global stylings to run in both workspaces and requests
     function global() {
         styleFunctions['noradius'] = function() {
@@ -584,6 +607,7 @@
     }
 
     function request() {
+
         eventFunctions['reqbuttons'] = function() {
             function addRequestButtonEvent(e) {
                 e.addEventListener('click', styleFunctions['reqbuttons']);
@@ -591,19 +615,32 @@
             document.querySelectorAll('.request-sub-note-box > button').forEach(addRequestButtonEvent);
         };
 
+        var tabFix = false; // track whether we've added the live lookup button tab fix yet
+
         eventFunctions['tabreset'] = function() {
             document.querySelector('a[href^="#livelookup"]').addEventListener('click', function() {
-                setTimeout(function() {
-                    document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').addEventListener('click', function() {
-                        setTimeout(function() {
-                            document.querySelector('a[href^="#customer"]').click();
-                        }, 200);
-                    });
-                }, 900);
+                waitUntil({
+                    condition: function() {
+                        return document.querySelector('#customer_ajax_ll_inner > div.box_footer > button');
+                    }
+                    , delay: 190 // ideally, this beats newrequest
+                    , maxAttempts: 10
+                    , predicate: function() {
+                        document.querySelector('a[href^="#customer"]').click();
+                        tabFix = true;
+                    }
+                });
+                // setTimeout(function() {
+                //     document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').addEventListener('click', function() {
+                //         setTimeout(function() {
+                //             document.querySelector('a[href^="#customer"]').click();
+                //         }, 200);
+                //     });
+                // }, 900);
             })
         }
 
-        eventFunctions['inboxselect'] = function() {
+        eventFunctions['newrequest'] = function() {
             let inbox = document.getElementById('Custom22');
             if (!inbox.value) {
                 inbox.value = inbox.options[1].value;
@@ -626,9 +663,20 @@
 
                 // run the live lookup
                 document.querySelector('a[href^="#livelookup"]').click();
-                setTimeout(function() {
-                    document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
-                }, 1000);
+                // setTimeout(function() {
+                //     document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
+                // }, 1000);
+                waitUntil({
+                    condition: function() {
+                        return document.querySelector('#customer_ajax_ll_inner > div.box_footer > button');
+                    }
+                    , delay: 200
+                    , maxAttempts: 10
+                    , predicate: function() {
+                        document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
+                        tabFix = false;
+                    }
+                })
             }
         };
 
@@ -650,35 +698,29 @@
         };
 
         styleFunctions['notestream'] = function() {
-
-            let attempts = 0;
-            function detectNoteStream() {
-                setTimeout(function() {
-                    if ([...document.querySelectorAll('.note-label')].length > 0) {
-                        styleNoteStream();
-                    }
-                    else if (++attempts < 10) {
-                        detectNoteStream();
-                    }
-                    else {
-                        console.log('Maximum attempts for notestream reached. Aborting notestream style function.');
-                    }
-                }, 500);
-            }
-
+            let result;
             function styleNoteStream() {
-                styleSelectorAll('.note-label', `border-radius: none; font-weight: bold`);
+                result = styleSelectorAll('.note-label', `border-radius: none; font-weight: bold`);
 
-                styleSelectorAll('.label-public', `background-color: ${colors.pub}; color: ${colors.white}`);
-                styleSelectorAll('.label-private', `background-color: ${colors.prv}; color: ${colors.white}`);
-                styleSelectorAll('.label-external', `background-color: ${colors.ext}; color: ${colors.black}`);
+                result += styleSelectorAll('.label-public', `background-color: ${colors.pub}; color: ${colors.white}`);
+                result += styleSelectorAll('.label-private', `background-color: ${colors.prv}; color: ${colors.white}`);
+                result += styleSelectorAll('.label-external', `background-color: ${colors.ext}; color: ${colors.black}`);
 
-                styleSelectorAll('.note-stream-item-public > div.note-stream-item-inner-wrap', `border-right-color: ${colors.pub}`);
-                styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${colors.prv}`);
-                styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${colors.ext}`);    
+                result += styleSelectorAll('.note-stream-item-public > div.note-stream-item-inner-wrap', `border-right-color: ${colors.pub}`);
+                result += styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${colors.prv}`);
+                result += styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${colors.ext}`);    
             }
 
-            detectNoteStream();
+            waitUntil({
+                condition: function() {
+                    return [...document.querySelectorAll('.note-label')].length > 0;
+                }
+                , delay: 200
+                , maxAttempts: 20
+                , predicate: styleNoteStream
+            });
+
+            return result;
         };
 
         console.log('> Request view detected. Applying request styling.');
