@@ -211,25 +211,28 @@
         localStorage.setItem('hsreq', JSON.stringify(storage));
     }
 
-    // Wait until condition returns true, then run predicate
-    function waitUntil(condition, delay = 500, maxAttempts = 10, predicate) {
+    // Wait until condition returns true, then run onSuccess; if timed out, run onFail
+    function waitUntil(condition, delay, maxAttempts, onSuccess, onFail) {
+        console.log(`- - - waitUntil to run ${onSuccess.name} - trying ${condition.name} up to ${maxAttempts} times over up to ${delay * maxAttempts}ms`);
         let attempts = 0;
         function attempt() {
             setTimeout(function() {
+                console.log(`- - - - Attempting ${condition.name} to run ${onSuccess.name} (attempt ${attempts + 1} of ${maxAttempts})...`);
                 if (condition()) {
-                    predicate();
+                    console.log(`- - - - - Success: ${onSuccess.name} returned ${onSuccess()} after ${attempts * delay}ms`);
                 }
-                else if (attempts++ < maxAttempts) {
+                else if (++attempts < maxAttempts) {
                     attempt();
                 }
                 else {
-                    console.log('> Maximum attempts reached:');
-                    console.log(`> > condition: ${condition.name} (currently: ${typeof condition} ${condition()})`);
-                    console.log('> > delay per attempt: ' + delay);
-                    console.log('> > attempts taken: ' + attempts);
-                    console.log('> > predicate: ' + predicate.name);
+                    console.log('- - - - Maximum attempts reached:');
+                    console.log(`- - - - - condition: ${condition.name} (currently: ${condition()})`);
+                    console.log('- - - - - delay per attempt: ' + delay);
+                    console.log('- - - - - attempts taken: ' + attempts);
+                    console.log('- - - - - onSuccess: ' + onSuccess.name);
+                    console.log(`- - - - - onFail: ${onFail ? `${onFail.name} returned ${onFail()}` : 'not defined'}`);
                 }
-            });
+            }, delay);
         }
         attempt();
     }
