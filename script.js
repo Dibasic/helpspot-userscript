@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.95
+// @version      0.96
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
@@ -599,7 +599,7 @@
                             document.querySelector('a[href^="#customer"]').click();
                         }, 200);
                     });
-                }, 1900);
+                }, 900);
             })
         }
 
@@ -628,7 +628,7 @@
                 document.querySelector('a[href^="#livelookup"]').click();
                 setTimeout(function() {
                     document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
-                }, 2000);
+                }, 1000);
             }
         };
 
