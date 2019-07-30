@@ -108,7 +108,7 @@
         colors.feature     = colors.base;       // #70a0d1
         colors.waiting     = colors.split1_l;   // #dd9797
         colors.question    = colors.triad1;     // #d170a0
-        
+
         colors.pub         = colors.triad2_d;   // #7ab93c
         colors.prv         = colors.split1_d;   // #b93d3c
         colors.ext         = colors.split2_l;   // #dddd97
@@ -353,6 +353,7 @@
 
         function getColumnById(id) {
             let thead = document.getElementById(id), index = null, result = [];
+            let index, result;
             if (thead) {
                 index = Array.prototype.indexOf.call(thead.parentNode.children, thead);
                 result = document.querySelectorAll('#rsgroup_1 tr[class^="tablerow"] td:nth-child(' + (index + 1) + ')');
@@ -361,22 +362,13 @@
         }
 
         styleFunctions.table = function() {
-            let result = document.getElementById('rsgroup_1');
-
-            result.style['font-family'] = '"Consolas", monospace';
-            result.style['font-size'] = '14px';
-
-            return 1;
+            return styleElementById('rsgroup_1', 'font-family: "Consolas", monospace; font-size: 14px; white-space: nowrap');
         };
+
         styleFunctions.thead = function() {
-            function styleHeadCell(e) {
-                e.style['text-decoration'] = 'none';
-            }
-            let result = document.querySelectorAll('td[id^="1_table_header_"] a');
-            result.forEach(styleHeadCell);
-
-            return result.length;
+            return styleSelectorAll('td[id^="1_table_header_"] a', 'text-decoration: none');
         };
+
         styleFunctions.category = function() {
             const pattern = /^(?:([A-Z]{2,})(?=$| (\d)| Client (Q)| (SOW)| (Mile))|(Impl|Other|Sales|daily\.sh|User Com)).*/
             , sub = '$1$6 $2$3$4$5';
