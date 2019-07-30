@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.96
+// @version      0.97
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
@@ -433,7 +433,7 @@
             if (header) {
                 header.innerText = 'Client';
             }
-            result.forEach(c => {c.style['font-weight'] = 'bold';});
+            result.forEach(styleCidCell);
 
             return result.length;
         };
@@ -477,7 +477,7 @@
 
             function styleStatusCell(e) {
                 if (!e.title) {
-                    let status = getCustomStatus(getId(e))
+                    let status = getCustomStatus(getId(e));
                     if (status) {
                         e.title = status;
                         styleElement(e, 'text-decoration: underline; text-decoration-style: dotted');
@@ -636,8 +636,8 @@
                         tabFix = true;
                     }
                 );
-            })
-        }
+            });
+        };
 
         eventFunctions['newrequest'] = function() {
             let inbox = document.getElementById('Custom22');
