@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.94
+// @version      0.95
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
@@ -610,9 +610,12 @@
             }
             let category = document.getElementById('xCategory');
             if (!category.value || category.value == '0') {
-                category.value = 41; //cat
-                // generate the rest of the form by faking this event
+                // default to cat and generate the proper form for this category
+                category.value = 41;
                 category.onchange.call();
+                // assign back to inbox
+                document.getElementById('xPersonAssignedTo_select').value = '0';
+                document.getElementById('xPersonAssignedTo_select').onchange.call();
             }
             let cid = document.getElementById('sUserId');
             if (!cid.value) {
