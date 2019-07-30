@@ -509,7 +509,7 @@
 
             return result.length;
         };
-        eventFunctions['status'] = function() {
+        styleFunctions.statusnotes = function() {
             function addStatusEvent(e) {
                 e.addEventListener('click', function() {
                     let customStatus = prompt('Custom status to show');
