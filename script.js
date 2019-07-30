@@ -353,7 +353,6 @@
 
         function getColumnById(id) {
             let thead = document.getElementById(id), index = null, result = [];
-            let index, result;
             if (thead) {
                 index = Array.prototype.indexOf.call(thead.parentNode.children, thead);
                 result = document.querySelectorAll('#rsgroup_1 tr[class^="tablerow"] td:nth-child(' + (index + 1) + ')');
