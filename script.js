@@ -159,17 +159,17 @@
         }
     }
 
-    // function styleElementById(id, cssText) {
-    //     const element = document.getElementById(id);
-    //     if (element) {
-    //         const rules = cssParse(cssText);
-    //         styleApply(element, rules);
-    //         return 1;
-    //     }
-    //     else {
-    //         return 0;
-    //     }
-    // }
+    function styleElementById(id, cssText) {
+        const element = document.getElementById(id);
+        if (element) {
+            const rules = cssParse(cssText);
+            styleApply(element, rules);
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
 
     function styleElement(element, cssText) {
         const rules = cssParse(cssText);
