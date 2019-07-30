@@ -223,7 +223,7 @@
                 }
                 else {
                     console.log('> Maximum attempts reached:');
-                    console.log(`> > condition: ${condition.name} (currently: ${typeof condition} ${condition.call()})`);
+                    console.log(`> > condition: ${condition.name} (currently: ${typeof condition} ${condition()})`);
                     console.log('> > delay per attempt: ' + delay);
                     console.log('> > attempts taken: ' + attempts);
                     console.log('> > predicate: ' + predicate.name);
