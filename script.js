@@ -623,24 +623,19 @@
 
         eventFunctions['tabreset'] = function() {
             document.querySelector('a[href^="#livelookup"]').addEventListener('click', function() {
-                waitUntil({
-                    condition: function() {
+                waitUntil(
+                    function detectLiveLookupButton() {
                         return document.querySelector('#customer_ajax_ll_inner > div.box_footer > button');
                     }
-                    , delay: 190 // ideally, this beats newrequest
-                    , maxAttempts: 10
-                    , predicate: function() {
-                        document.querySelector('a[href^="#customer"]').click();
+                    , 190 // ideally, this beats newrequest
+                    , 10
+                    , function setTabFixEvent() {
+                        document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').addEventListener('click', function() {
+                            document.querySelector('a[href^="#customer"]').click();
+                        });
                         tabFix = true;
                     }
-                });
-                // setTimeout(function() {
-                //     document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').addEventListener('click', function() {
-                //         setTimeout(function() {
-                //             document.querySelector('a[href^="#customer"]').click();
-                //         }, 200);
-                //     });
-                // }, 900);
+                );
             })
         }
 
@@ -667,20 +662,17 @@
 
                 // run the live lookup
                 document.querySelector('a[href^="#livelookup"]').click();
-                // setTimeout(function() {
-                //     document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
-                // }, 1000);
-                waitUntil({
-                    condition: function() {
+                waitUntil(
+                    function detectLiveLookupButton() {
                         return document.querySelector('#customer_ajax_ll_inner > div.box_footer > button');
                     }
-                    , delay: 200
-                    , maxAttempts: 10
-                    , predicate: function() {
+                    , 200
+                    , 10
+                    , function clickLiveLookupButton() {
                         document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
                         tabFix = false;
                     }
-                })
+                );
             }
         };
 
@@ -712,17 +704,19 @@
 
                 result += styleSelectorAll('.note-stream-item-public > div.note-stream-item-inner-wrap', `border-right-color: ${colors.pub}`);
                 result += styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${colors.prv}`);
-                result += styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${colors.ext}`);    
+                result += styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${colors.ext}`);
+
+                return result;
             }
 
-            waitUntil({
-                condition: function() {
+            waitUntil(
+                function detectNoteStream() {
                     return [...document.querySelectorAll('.note-label')].length > 0;
                 }
-                , delay: 200
-                , maxAttempts: 20
-                , predicate: styleNoteStream
-            });
+                , 200
+                , 50
+                , styleNoteStream
+            );
 
             return result;
         };
