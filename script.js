@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.92
+// @version      0.93
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?://helpspot\.courseleaf\.com/admin\.php\?pg=(?:workspace|request(?:&fb=\d+)?)&(?:show|reqid)=(\w+)/
@@ -609,7 +609,7 @@
                 inbox.value = inbox.options[1].value;
             }
             let category = document.getElementById('xCategory');
-            if (!category.value) {
+            if (!category.value || category.value == '0') {
                 category.value = 41; //cat
             }
             let cid = document.getElementById('sUserId');
