@@ -41,12 +41,13 @@
 
         if (pg === 'workspace') {
             workspace();
+            startTimer();
         }
         else if (pg === 'request') {
             request();
+            runStyleFunctions();
         }
 
-        runStyleFunctions();
         runEventFunctions();
     }
 
@@ -701,9 +702,6 @@
         };
 
         console.log('> Workspace view detected. Applying workspace styling.');
-
-        startTimer();
-
     }
 
     function request() {
@@ -832,10 +830,19 @@
     }
 
     function runStyleFunctions() {
+        let starttime = new Date().getTime();
+        let count = 0;
         Object.keys(styleFunctions).forEach(function(fn) {
             let result = styleFunctions[fn].call();
-            console.log(`> > ${fn} updated ${result && result[0] ? result[0] : '?'} elements in ${result && result[1] ? result[1] : '?'}ms`);
+            let incr = '?';
+            if (result && result[0]) {
+                incr = result[0];
+                count += incr;
+            }
+            console.log(`> > ${fn} updated ${incr} elements in ${result && result[1] ? result[1] : '?'}ms`);
         });
+        let duration = new Date().getTime() - starttime;
+        console.log(`> styleFunctions updated at least ${count} elements in ${duration}ms`);
     }
 
     function runEventFunctions() {
