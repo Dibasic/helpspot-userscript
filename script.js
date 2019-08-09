@@ -834,7 +834,7 @@
     function runStyleFunctions() {
         Object.keys(styleFunctions).forEach(function(fn) {
             let result = styleFunctions[fn].call();
-            console.log(`> > ${fn} updated ${result ? result[0] : '?'} elements in ${result ? result[1] : '?'}ms`);
+            console.log(`> > ${fn} updated ${result && result[0] ? result[0] : '?'} elements in ${result && result[1] ? result[1] : '?'}ms`);
         });
     }
 
