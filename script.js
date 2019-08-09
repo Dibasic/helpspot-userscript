@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.98
+// @version      0.99
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
@@ -813,13 +813,23 @@
                 return [result, duration];
             }
 
+            function quoteMostRecentNote() {
+                let quote = document.querySelector('a[onclick^="hs_quote"]');
+                quote = quote.getAttribute('onclick');
+                quote = quote.substring(0, quote.indexOf(';'));
+                eval(quote);
+            }
+
             waitUntil(
                 function detectNoteStream() {
                     return [...document.querySelectorAll('.note-label')].length > 0;
                 }
                 , 200
                 , 50
-                , styleNoteStream
+                , function() {
+                    styleNoteStream(); 
+                    quoteMostRecentNote();
+                }
             );
 
             let duration = new Date().getTime() - timestart;
