@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.97
+// @version      0.98
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
@@ -17,7 +17,9 @@
 
     var storage = {};
 
-    var colors = {};
+    var C = {};
+
+    var S = {};
 
     function main() {
         readStorage();
@@ -31,7 +33,9 @@
         let arg = match[2] || 'err';
         console.log('> Page: ' + pg + '\n> Argument: ' + arg);
 
-        setColors();
+        setColor();
+
+        setStatus();
 
         global();
 
@@ -58,60 +62,81 @@
         setTimeout(startTimer, 200);
     }
 
-    function setColors() {
+    function setColor() {
         // created with colorhexa.com
         // base color taken from header of HelpSpot with blue theme
         // suggest using a color highlighter if you edit these
 
-        colors.base        = '#70a0d1';
-        //colors.comp      = '#d1a170';
-        //colors.analog1   = '#70d1d1';
-        //colors.analog2   = '#7170d1';
-        //colors.split1    = '#d17170';
-        //colors.split2    = '#d1d170';
-        colors.triad1      = '#d170a0';
-        //colors.triad2    = '#a0d170';
-        //colors.tetrad    = '#70d1a1';
+        C.base        = '#70a0d1';
+        //C.comp      = '#d1a170';
+        //C.analog1   = '#70d1d1';
+        //C.analog2   = '#7170d1';
+        //C.split1    = '#d17170';
+        //C.split2    = '#d1d170';
+        C.triad1      = '#d170a0';
+        //C.triad2    = '#a0d170';
+        //C.tetrad    = '#70d1a1';
 
-        //colors.base_d    = '#4986c5';
-        //colors.comp_d    = '#b97b3c';
-        //colors.analog1_d = '#3cb9b9';
-        //colors.analog2_d = '#3d3cb9';
-        colors.split1_d    = '#b93d3c';
-        //colors.split2_d  = '#b9b93c';
-        //colors.triad1_d  = '#b93c7a';
-        colors.triad2_d    = '#7ab93c';
-        //colors.tetrad_d  = '#3cb97b';
+        //C.base_d    = '#4986c5';
+        //C.comp_d    = '#b97b3c';
+        //C.analog1_d = '#3cb9b9';
+        //C.analog2_d = '#3d3cb9';
+        C.split1_d    = '#b93d3c';
+        //C.split2_d  = '#b9b93c';
+        //C.triad1_d  = '#b93c7a';
+        C.triad2_d    = '#7ab93c';
+        //C.tetrad_d  = '#3cb97b';
 
-        //colors.base_l    = '#97badd';
-        //colors.comp_l    = '#ddba97';
-        //colors.analog1_l = '#97dddd';
-        //colors.analog2_l = '#9797dd';
-        colors.split1_l    = '#dd9797';
-        colors.split2_l    = '#dddd97';
-        //colors.triad1_l  = '#dd97ba';
-        colors.triad2_l    = '#badd97';
-        //colors.tetrad_l  = '#97ddba';
+        //C.base_l    = '#97badd';
+        //C.comp_l    = '#ddba97';
+        //C.analog1_l = '#97dddd';
+        //C.analog2_l = '#9797dd';
+        C.split1_l    = '#dd9797';
+        C.split2_l    = '#dddd97';
+        //C.triad1_l  = '#dd97ba';
+        C.triad2_l    = '#badd97';
+        //C.tetrad_l  = '#97ddba';
 
         // needed a better yellow, so tried to use existing values
-        colors.conyellow   = '#dddd49';
+        C.conyellow   = '#dddd49';
 
-        colors.white       = '#ffffff';
-        colors.gray_l      = '#e0e0e0';
-        colors.gray_m      = '#a0a0a0';
-        //colors.gray_d    = '#606060';
-        //colors.black     = '#202020';
+        C.white       = '#ffffff';
+        C.gray_l      = '#e0e0e0';
+        C.gray_m      = '#a0a0a0';
+        //C.gray_d    = '#606060';
+        //C.black     = '#202020';
 
-        colors.error       = colors.split1_d;   // #b93d3c
-        colors.warning     = colors.conyellow;  // #dddd49
-        colors.resolved    = colors.triad2_d;   // #7ab93c
-        colors.feature     = colors.base;       // #70a0d1
-        colors.waiting     = colors.split1_l;   // #dd9797
-        colors.question    = colors.triad1;     // #d170a0
+        C.error       = C.split1_d;   // #b93d3c
+        C.warning     = C.conyellow;  // #dddd49
+        C.resolved    = C.triad2_d;   // #7ab93c
+        C.feature     = C.base;       // #70a0d1
+        C.waiting     = C.split1_l;   // #dd9797
+        C.question    = C.triad1;     // #d170a0
 
-        colors.pub         = colors.triad2_d;   // #7ab93c
-        colors.prv         = colors.split1_d;   // #b93d3c
-        colors.ext         = colors.split2_l;   // #dddd97
+        C.pub         = C.triad2_d;   // #7ab93c
+        C.prv         = C.split1_d;   // #b93d3c
+        C.ext         = C.split2_l;   // #dddd97
+    }
+
+    function setStatus() {
+        S = {
+            'Active'                   : { text: null              , bg: C.warning  , fg: null    , b: null   }
+          , 'Appointment Complete'     : { text: 'App Complete'    , bg: C.resolved , fg: null    , b: null   }
+          , 'Appointment Scheduled'    : { text: 'App Scheduled'   , bg: C.warning  , fg: null    , b: null   }
+          , 'Assessment'               : { text: null              , bg: C.feature  , fg: null    , b: null   }
+          , 'Customer Found Solution'  : { text: 'Found Solution'  , bg: C.resolved , fg: null    , b: null   }
+          , 'Customer Unreachable'     : { text: 'Unreachable'     , bg: C.gray_m   , fg: C.white , b: null   }
+          , 'Escalated'                : { text: null              , bg: C.error    , fg: null    , b: 'bold' }
+          , 'Not Supported'            : { text: null              , bg: C.waiting  , fg: null    , b: null   }
+          , 'Passed to Implementation' : { text: 'Implementation'  , bg: C.waiting  , fg: null    , b: null   }
+          , 'Pending Client Feedback'  : { text: 'Feedback'        , bg: C.resolved , fg: null    , b: null   }
+          , 'Pending Internal Info'    : { text: 'Internal Info'   , bg: C.waiting  , fg: null    , b: null   }
+          , 'Problem Solved'           : { text: 'Solved'          , bg: C.resolved , fg: null    , b: null   }
+          , 'Question Answered'        : { text: 'Answered'        , bg: C.resolved , fg: null    , b: null   }
+          , 'Sales Request'            : { text: 'Sales'           , bg: C.waiting  , fg: null    , b: null   }
+          , 'Stale'                    : { text: null              , bg: C.waiting  , fg: null    , b: null   }
+          , 'Support Rep Working'      : { text: 'Working'         , bg: C.warning  , fg: null    , b: null   }
+        };
     }
 
     function cssParse(cssText) {
@@ -239,6 +264,9 @@
     // global stylings to run in both workspaces and requests
     function global() {
         styleFunctions.noradius = function() {
+
+            let timestart = new Date().getTime();
+
             function styleNoBorder(e) {
                 e.style['border-radius'] = '0';
                 e.style['-webkit-border-radius'] = '0';
@@ -246,22 +274,27 @@
             }
 
             document.querySelectorAll('.btn').forEach(styleNoBorder);
+
+            let duration = new Date().getTime() - timestart;
         };
         styleFunctions.nogradient = function() {
+
+            let timestart = new Date().getTime();
+
             let count = 0;
             function styleNoGradient(e, flatcolor) {
                 e.style['background'] = flatcolor;
                 count++;
             }
 
-            styleNoGradient(document.getElementById('hd'), colors.base);
-            styleNoGradient(document.querySelector('#hd table'), colors.base);
+            styleNoGradient(document.getElementById('hd'), C.base);
+            styleNoGradient(document.querySelector('#hd table'), C.base);
 
             document.querySelectorAll('.btn:not(.theme)').forEach(function(e) {
-                styleNoGradient(e, colors.gray_l);
+                styleNoGradient(e, C.gray_l);
             });
             document.querySelectorAll('.btn.theme').forEach(function(e) {
-                styleNoGradient(e, colors.base);
+                styleNoGradient(e, C.base);
             });
 
             document.querySelectorAll('ul.tabs li a:not(.active)').forEach(function(e) {
@@ -271,9 +304,14 @@
                 styleNoGradient(e, C.base);
             });
 
-            return count;
+            let duration = new Date().getTime() - timestart;
+
+            return [count, duration];
         };
         styleFunctions.noborder = function() {
+
+            let timestart = new Date().getTime();
+
             let count = 0;
             function styleNoBorder(e) {
                 e.style['border'] = 'none';
@@ -282,9 +320,14 @@
 
             document.querySelectorAll('.btn').forEach(styleNoBorder);
 
-            return count;
+
+            let duration = new Date().getTime() - timestart;
+
+            return [count, duration];
         };
         styleFunctions.noshadow = function() {
+
+            let timestart = new Date().getTime();
 
             let count = 0;
             function styleNoShadow(e, bold=false) {
@@ -315,11 +358,15 @@
                 styleNoShadow(e, true);
             });
 
+            let duration = new Date().getTime() - timestart;
 
-            return count;
+            return [count, duration];
         };
         // todo move out of stylefunctions, only needs to run once
         styleFunctions.tabevents = function() {
+
+            let timestart = new Date().getTime();
+
 
             function tabActivate(e) {
                 let active = e.className === 'active';
@@ -345,7 +392,9 @@
 
             tabs.forEach(addTabEvent);
 
-            return tabs.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [tabs.length, duration];
         };
     }
 
@@ -369,6 +418,9 @@
         };
 
         styleFunctions.category = function() {
+
+            let timestart = new Date().getTime();
+
             const pattern = /^(?:([A-Z]{2,})(?=$| (\d)| Client (Q)| (SOW)| (Mile))|(Impl|Other|Sales|daily\.sh|User Com)).*/
             , sub = '$1$6 $2$3$4$5';
 
@@ -410,9 +462,14 @@
             let result = getColumnById('1_table_header_sCategory').cells;
             result.forEach(styleCategoryCell);
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.cid = function() {
+
+            let timestart = new Date().getTime();
+
             function styleCidCell(e) {
                 e.style['font-weight'] = 'bold';
             }
@@ -425,9 +482,14 @@
             }
             result.forEach(styleCidCell);
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.age = function() {
+
+            let timestart = new Date().getTime();
+
             const age = /^(\d{1,2}) ([mhdw])(?:in|our|ay|eek|onth)s?(?:, (\d{1,2}) ([mhdw])(?:in|our|ay|eek|onth)s?)?$/;
             function formatAge(a) {
                 let match = a.match(age);
@@ -449,9 +511,14 @@
             let result = getColumnById('1_table_header_dtGMTOpened').cells;
             result.forEach(c => {c.innerHTML = formatAge(c.innerText);});
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.numUpdates = function() {
+
+            let timestart = new Date().getTime();
+
             let result = getColumnById('1_table_header_ctPublicUpdates').cells;
             result.forEach(c => {
                 c.innerText = c.innerText === '1' ? '' : c.innerText;
@@ -459,11 +526,13 @@
                 c.style['font-weight'] = 'bold';
             });
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.status = function() {
-            const pattern = /^(?:Pending (Client Feedback|Internal Info)|Support Rep (Working)|Problem (Solved)|Question (Answered)|(App)ointment( Scheduled| Complete)|Customer (Found Solution|Unreachable)|Passed to (Implementation)|(Sales) Request)$/
-            , sub = '$1$2$3$4$5$6$7$8$9';
+
+            let timestart = new Date().getTime();
 
             function styleStatusCell(e) {
                 if (!e.title) {
@@ -477,8 +546,21 @@
                     }
                 }
 
-                const result = e.innerText.replace(pattern, sub);
-                e.innerText = result;
+                const newStatus = S[e.innerText];
+                if (newStatus) {
+                    if (newStatus.text) {
+                        e.innerText = newStatus.text;
+                    }
+                    if (newStatus.bg) {
+                        e.style['background-color'] = newStatus.bg;
+                    }
+                    if (newStatus.fg) {
+                        e.style['color'] = newStatus.fg;
+                    }
+                    if (newStatus.b) {
+                        e.style['font-weight'] = newStatus.b;
+                    }
+                }
 
                 if (e.innerText === 'Escalated') {
                     e.style['background-color'] = C.error;
@@ -502,7 +584,7 @@
                     || e.innerText === 'App Complete'
                     || e.innerText === 'Answered'
                     || e.innerText === 'Solved') {
-                    e.style['background-color'] = colors.resolved;
+                    e.style['background-color'] = C.resolved;
                 }
                 else if (e.innerText === 'Stale'
                     || e.innerText === 'Implementation'
@@ -523,9 +605,14 @@
             let result = getColumnById('1_table_header_sStatus').cells;
             result.forEach(styleStatusCell);
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.statusnotes = function() {
+
+            let timestart = new Date().getTime();
+
             function addStatusEvent(e) {
                 e.addEventListener('click', function() {
                     let customStatus = prompt('Custom status to show');
@@ -540,9 +627,14 @@
             let result = getColumnById('1_table_header_sStatus').cells;
             result.forEach(addStatusEvent);
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.email = function() {
+
+            let timestart = new Date().getTime();
+
             let column = getColumnById('1_table_header_sEmail')
             , header = column.header
             , result = column.cells;
@@ -558,9 +650,14 @@
                 e.innerText = match && match[1] || e.innerText;
             });
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.request = function() {
+
+            let timestart = new Date().getTime();
+
             function styleRequestCell(e) {
                 setHoverText(e);
                 setFontSize(e);
@@ -577,9 +674,14 @@
             let result = document.querySelectorAll('td.js-request');
             result.forEach(styleRequestCell);
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
         styleFunctions.inboxlabel = function() {
+
+            let timestart = new Date().getTime();
+
             function styleInboxLabelCell(e) {
                 if (e.innerText.startsWith('Courseleaf ')) {
                     e.innerText = e.innerText.substring(11);
@@ -593,7 +695,9 @@
             let result = document.querySelectorAll('span.color-label');
             result.forEach(styleInboxLabelCell);
 
-            return result.length;
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
         };
 
         console.log('> Workspace view detected. Applying workspace styling.');
@@ -669,23 +773,32 @@
         };
 
         styleFunctions.reqbuttons = function() {
+
+            let timestart = new Date().getTime();
+
             styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${C.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
             let color;
             if (1 == styleSelector('#button-public.btn-request-public',     `background: ${C.pub} !important; font-weight: bold !important`)) {
                 color = C.pub;
             }
-            else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${colors.prv} !important; font-weight: bold !important`)) {
-                color = colors.prv;
+            else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${C.prv} !important; font-weight: bold !important`)) {
+                color = C.prv;
             }
             else if (1 == styleSelector('#button-external.btn-request-external', `background: ${C.ext} !important; font-weight: bold !important`)) {
                 color = C.ext;
             }
             styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${C.gray_l}`);
             styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important`);
-            return 5;
+
+            let duration = new Date().getTime() - timestart;
+            return [5, duration];
+
         };
 
         styleFunctions.notestream = function() {
+
+            let timestart = new Date().getTime();
+
             let result;
             function styleNoteStream() {
                 result = styleSelectorAll('.note-label', `border-radius: none; font-weight: bold`);
@@ -699,6 +812,7 @@
                 result += styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${C.prv}`);
                 result += styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${C.ext}`);
 
+                return [result, duration];
             }
 
             waitUntil(
@@ -710,14 +824,18 @@
                 , styleNoteStream
             );
 
-            return result;
+            let duration = new Date().getTime() - timestart;
+            return [result, duration];
         };
 
         console.log('> Request view detected. Applying request styling.');
     }
 
     function runStyleFunctions() {
-        Object.keys(styleFunctions).forEach(fn => console.log('> > ' + fn + ' updated ' + styleFunctions[fn].call() + ' elements'));
+        Object.keys(styleFunctions).forEach(function(fn) {
+            let result = styleFunctions[fn].call();
+            console.log(`> > ${fn} updated ${result ? result[0] : '?'} elements in ${result ? result[1] : '?'}ms`);
+        });
     }
 
     function runEventFunctions() {
