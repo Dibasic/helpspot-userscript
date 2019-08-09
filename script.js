@@ -4,7 +4,7 @@
 // @version      0.97
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
-// @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&show=(\d+))?|request(?:&fb=(\d+))?(?:&reqid=(\d+)))/
+// @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
 // @grant        none
 // ==/UserScript==
 
