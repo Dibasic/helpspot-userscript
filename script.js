@@ -265,10 +265,10 @@
             });
 
             document.querySelectorAll('ul.tabs li a:not(.active)').forEach(function(e) {
-                styleNoGradient(e, colors.gray_l);
+                styleNoGradient(e, C.gray_l);
             });
             document.querySelectorAll('ul.tabs li a.active').forEach(function(e) {
-                styleNoGradient(e, colors.base);
+                styleNoGradient(e, C.base);
             });
 
             return count;
@@ -323,7 +323,7 @@
 
             function tabActivate(e) {
                 let active = e.className === 'active';
-                e.style['background'] = active ? colors.base : colors.gray_l;
+                e.style['background'] = active ? C.base : C.gray_l;
                 e.style['font-weight'] = active ? 'bold' : 'normal';
             }
 
@@ -380,31 +380,31 @@
                 e.innerText = result;
 
                 if (e.innerText.endsWith(' 1')) {
-                    e.style['background-color'] = colors.error;
-                    e.style['color'] = colors.white;
+                    e.style['background-color'] = C.error;
+                    e.style['color'] = C.white;
                     e.style['font-weight'] = 'bold';
                 }
                 else if (e.innerText.endsWith(' 2')
                     || e.innerText.endsWith(' Mile')
                     || e.innerText === 'CSR/SSL') {
-                    e.style['background-color'] = colors.warning;
+                    e.style['background-color'] = C.warning;
                 }
                 else if (e.innerText.endsWith(' 3')
                     || e.innerText.endsWith(' 4')
                     || e.innerText.endsWith(' SOW')) {
-                    e.style['background-color'] = colors.feature;
+                    e.style['background-color'] = C.feature;
                 }
                 else if (e.innerText.endsWith(' Q')) {
-                    e.style['background-color'] = colors.question;
+                    e.style['background-color'] = C.question;
                 }
                 else if (e.innerText.match(product)
                     || e.innerText === '-') {
-                    e.style['background-color'] = colors.warning;
+                    e.style['background-color'] = C.warning;
                 }
                 else if (e.innerText === 'Implementation'
                     || e.innerText === 'Sales'
                     || e.innerText === 'Training') {
-                    e.style['background-color'] = colors.waiting;
+                    e.style['background-color'] = C.waiting;
                 }
             }
             let result = getColumnById('1_table_header_sCategory').cells;
@@ -481,21 +481,21 @@
                 e.innerText = result;
 
                 if (e.innerText === 'Escalated') {
-                    e.style['background-color'] = colors.error;
-                    e.style['color'] = colors.white;
+                    e.style['background-color'] = C.error;
+                    e.style['color'] = C.white;
                     e.style['font-weight'] = 'bold';
                 }
                 else if (e.innerText === 'Active'
                     || e.innerText === 'App Scheduled'
                     || e.innerText === 'Working') {
-                    e.style['background-color'] = colors.warning;
+                    e.style['background-color'] = C.warning;
                     e.style['font-weight'] = 'bold';
                 }
                 else if (e.innerText.startsWith('JAL')
                     || e.innerText === 'Internal Info'
                     || e.innerText === 'Assessment'
                     || e.innerText === 'SOW') {
-                    e.style['background-color'] = colors.feature;
+                    e.style['background-color'] = C.feature;
                 }
                 else if (e.innerText === 'Client Feedback'
                     || e.innerText === 'Found Solution'
@@ -508,14 +508,14 @@
                     || e.innerText === 'Implementation'
                     || e.innerText === 'Sales'
                     || e.innerText === 'Not Supported') {
-                    e.style['background-color'] = colors.waiting;
+                    e.style['background-color'] = C.waiting;
                 }
                 else if (e.innerText.endsWith(' Only')
                     || e.innerText.endsWith(' Logs')
                     || e.innerText === 'OOTO Only'
                     || e.innerText === 'Unreachable'
                     || e.innerText === 'SPAM') {
-                    e.style['background-color'] = colors.gray_m;
+                    e.style['background-color'] = C.gray_m;
                 }
 
                 styleElement(e, 'cursor: pointer');
@@ -669,18 +669,18 @@
         };
 
         styleFunctions.reqbuttons = function() {
-            styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${colors.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
+            styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${C.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
             let color;
-            if (1 == styleSelector('#button-public.btn-request-public',     `background: ${colors.pub} !important; font-weight: bold !important`)) {
-                color = colors.pub;
+            if (1 == styleSelector('#button-public.btn-request-public',     `background: ${C.pub} !important; font-weight: bold !important`)) {
+                color = C.pub;
             }
             else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${colors.prv} !important; font-weight: bold !important`)) {
                 color = colors.prv;
             }
-            else if (1 == styleSelector('#button-external.btn-request-external', `background: ${colors.ext} !important; font-weight: bold !important`)) {
-                color = colors.ext;
+            else if (1 == styleSelector('#button-external.btn-request-external', `background: ${C.ext} !important; font-weight: bold !important`)) {
+                color = C.ext;
             }
-            styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${colors.gray_l}`);
+            styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${C.gray_l}`);
             styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important`);
             return 5;
         };
@@ -690,15 +690,15 @@
             function styleNoteStream() {
                 result = styleSelectorAll('.note-label', `border-radius: none; font-weight: bold`);
 
-                result += styleSelectorAll('.label-public', `background-color: ${colors.pub}; color: ${colors.white}`);
-                result += styleSelectorAll('.label-private', `background-color: ${colors.prv}; color: ${colors.white}`);
-                result += styleSelectorAll('.label-external', `background-color: ${colors.ext}; color: ${colors.black}`);
 
-                result += styleSelectorAll('.note-stream-item-public > div.note-stream-item-inner-wrap', `border-right-color: ${colors.pub}`);
-                result += styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${colors.prv}`);
-                result += styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${colors.ext}`);
+                result += styleSelectorAll('.label-public', `background-color: ${C.pub}; color: ${C.white}`);
+                result += styleSelectorAll('.label-private', `background-color: ${C.prv}; color: ${C.white}`);
+                result += styleSelectorAll('.label-external', `background-color: ${C.ext}; color: ${C.black}`);
 
-                return result;
+                result += styleSelectorAll('.note-stream-item-public > div.note-stream-item-inner-wrap', `border-right-color: ${C.pub}`);
+                result += styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${C.prv}`);
+                result += styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${C.ext}`);
+
             }
 
             waitUntil(
