@@ -706,6 +706,17 @@
 
     function request() {
 
+        eventFunctions.key = function() {
+            let key = document.querySelector('#access_key_box td.tdr').innerText;
+            if (key) {
+                document.querySelector('span.box_title_big').innerText = key;
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+
         eventFunctions.reqbuttons = function() {
             function addRequestButtonEvent(e) {
                 e.addEventListener('click', styleFunctions.reqbuttons);
