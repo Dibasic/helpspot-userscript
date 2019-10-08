@@ -8,9 +8,15 @@
 // @grant        none
 // ==/UserScript==
 
-// jshint devel: true, esnext: true, laxcomma: true, laxbreak: true, -W069
+/* jshint devel: true, esnext: true, laxcomma: true, laxbreak: true, -W069 */
+/* globals $jq, hs_quote_public */
 (function() {
     'use strict';
+
+    // grab their jquery instance
+    // ancient! going to avoid for compatibility/awful unsearchable bugs
+    // ours uses jQuery 1.7.2
+    var $ = $jq;
 
     var styleFunctions = {};
     var eventFunctions = {};
@@ -274,9 +280,12 @@
                 e.style['-moz-border-radius'] = '0';
             }
 
-            document.querySelectorAll('.btn').forEach(styleNoBorder);
+            let count = document.querySelectorAll('.btn');
+            count.forEach(styleNoBorder);
 
             let duration = new Date().getTime() - timestart;
+
+            return [count, duration];
         };
         styleFunctions.nogradient = function() {
 
@@ -706,6 +715,9 @@
 
     function request() {
         eventFunctions.key = function() {
+            function setKeyText(titlebox) {
+                titlebox.innerText = key;
+            }
             let key = document.querySelector('#access_key_box td.tdr').innerText;
             if (key) {
                 let titlebox = document.querySelector('span.box_title_big');
@@ -716,10 +728,7 @@
                 newBox.appendChild(titlebox);
 
                 // replace ticket number text with access key
-                function setKeyText() {
-                    titlebox.innerText = key;
-                }
-                setKeyText();
+                setKeyText(titlebox);
 
                 // copy access key on click
                 titlebox.style['cursor'] = 'pointer';
@@ -739,7 +748,7 @@
             else {
                 return 0;
             }
-        }
+        };
 
         eventFunctions.reqbuttons = function() {
             function addRequestButtonEvent(e) {
