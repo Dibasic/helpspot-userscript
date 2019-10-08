@@ -845,8 +845,8 @@
 
             function quotePublicHistory() {
                 let quote = document.querySelector('a[href^="javascript:hs_quote_public"][id^="mmlink"]');
-                quote = quote.getAttribute('onclick');
-                quote = quote.substring(0, quote.indexOf(';'));
+                quote = quote.getAttribute('href');
+                quote = quote.substring(quote.indexOf(':') + 1);
                 eval(quote);
             }
 
