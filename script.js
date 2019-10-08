@@ -710,14 +710,19 @@
             if (key) {
                 let titlebox = document.querySelector('span.box_title_big');
 
-                titlebox.style['cursor'] = 'pointer';
+                // add a new title div for titlebox to separate it from buttons
+                let newBox = titlebox.parentNode.cloneNode();
+                titlebox.parentNode.parentNode.prepend(newBox);
+                newBox.appendChild(titlebox);
 
+                // replace ticket number text with access key
                 function setKeyText() {
                     titlebox.innerText = key;
                 }
-
                 setKeyText();
 
+                // copy access key on click
+                titlebox.style['cursor'] = 'pointer';
                 titlebox.onclick = function() {
                     const ta = document.createElement('textarea');
                     ta.value = key;
