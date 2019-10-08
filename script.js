@@ -705,11 +705,30 @@
     }
 
     function request() {
-
         eventFunctions.key = function() {
             let key = document.querySelector('#access_key_box td.tdr').innerText;
             if (key) {
-                document.querySelector('span.box_title_big').innerText = key;
+                let titlebox = document.querySelector('span.box_title_big');
+
+                titlebox.style['cursor'] = 'pointer';
+
+                function setKeyText() {
+                    titlebox.innerText = key;
+                }
+
+                setKeyText();
+
+                titlebox.onclick = function() {
+                    const ta = document.createElement('textarea');
+                    ta.value = key;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    titlebox.innerText = '✓ copied';
+                    setTimeout(setKeyText, 500);
+                };
+                
                 return 1;
             }
             else {
