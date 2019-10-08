@@ -824,8 +824,8 @@
                 return [result, duration];
             }
 
-            function quoteMostRecentNote() {
-                let quote = document.querySelector('a[onclick^="hs_quote"]');
+            function quotePublicHistory() {
+                let quote = document.querySelector('a[href^="javascript:hs_quote_public"][id^="mmlink"]');
                 quote = quote.getAttribute('onclick');
                 quote = quote.substring(0, quote.indexOf(';'));
                 eval(quote);
@@ -839,7 +839,7 @@
                 , 50
                 , function() {
                     styleNoteStream(); 
-                    quoteMostRecentNote();
+                    quotePublicHistory();
                 }
             );
 
