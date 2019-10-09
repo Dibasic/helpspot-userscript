@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      0.99
+// @version      1.00
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
@@ -157,6 +157,10 @@
             rules.push(match);
         }
         return rules;
+    }
+
+    function quotePublicHistory() {
+        hs_quote_public(document.getElementById('reqid').value, 'tBody');
     }
 
     function styleApply(element, rules) {
@@ -742,7 +746,7 @@
                     titlebox.innerText = '✓ copied';
                     setTimeout(setKeyText, 500);
                 };
-                
+
                 return 1;
             }
             else {
@@ -774,6 +778,50 @@
                         tabFix = true;
                     }
                 );
+            });
+        };
+
+        eventFunctions.wysiwyg = function() {
+            waitUntil(function detectWysiwyg() {
+                return [...document.querySelectorAll('.ephox-chameleon-toolbar')].length > 0;
+            }, 200, 10, function setWysiwyg() {
+                // This one is a pain to do without jQuery, probably
+
+                $jq('iframe.ephox-hare-content-iframe').first().contents().find('body').css({
+                    'max-height': '600px',
+                    'overflow-y': 'scroll'
+                });
+
+                let newButtons = '';
+                newButtons += '<span id="hssu-wysiwyg" role="toolbar" class="ephox-chameleon-toolbar-group">';
+
+                newButtons += '<span id="hssu-clear" class="hssu-wb" title="Clear All Text">🗑️</span>';
+                newButtons += '<span id="hssu-quote" class="hssu-wb" title="Quote All Public Notes">💬</span>';
+
+                newButtons += '</span>';
+
+                newButtons = $jq(newButtons);
+
+                $jq('div.ephox-chameleon-toolbar').first().append(newButtons);
+
+                $jq('.hssu-wb').css({
+                    'display': 'block',
+                    'margin': '5px',
+                    'background-color': C.base_l
+                });
+
+                // clear button
+                $jq('#hssu-clear').click(function() {
+                    // save draft
+                    $jq('span.ephox-pastry-button[title^="Save"]').click();
+                    // erase email body with a bad hack
+                    $jq('iframe.ephox-hare-content-iframe').first().contents().find('body[class^="ephox"]')[0].innerHTML = '<p><br></p>';
+                });
+
+                // quote button
+                $jq('#hssu-quote').click(function() {
+                    quotePublicHistory();
+                });
             });
         };
 
@@ -857,10 +905,6 @@
                 return [result, duration];
             }
 
-            function quotePublicHistory() {
-                hs_quote_public(document.getElementById('reqid').value, 'tBody');
-            }
-
             waitUntil(
                 function detectNoteStream() {
                     return [...document.querySelectorAll('.note-label')].length > 0;
@@ -868,7 +912,7 @@
                 , 200
                 , 50
                 , function() {
-                    styleNoteStream(); 
+                    styleNoteStream();
                     quotePublicHistory();
                 }
             );
