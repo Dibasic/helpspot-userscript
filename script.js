@@ -94,7 +94,7 @@
         C.triad2_d    = '#7ab93c';
         //C.tetrad_d  = '#3cb97b';
 
-        //C.base_l    = '#97badd';
+        C.base_l      = '#97badd';
         //C.comp_l    = '#ddba97';
         //C.analog1_l = '#97dddd';
         //C.analog2_l = '#9797dd';
@@ -791,48 +791,6 @@
             });
         };
 
-        eventFunctions.wysiwyg = function() {
-            waitUntil(function detectWysiwyg() {
-                return [...document.querySelectorAll('.ephox-chameleon-toolbar')].length > 0;
-            }, 200, 10, function setWysiwyg() {
-                // This one is a pain to do without jQuery, probably
-
-                $('iframe.ephox-hare-content-iframe').first().contents().find('body').css({
-                    'max-height': '600px',
-                    'overflow-y': 'scroll'
-                });
-                
-                // TODO find out why these buttons are disappearing without a timeout so we can use a better method
-                setTimeout(function(){
-                    let newButtons = '';
-                    newButtons += '<span id="hssu-wysiwyg" role="toolbar" class="ephox-chameleon-toolbar-group">';
-                    newButtons += '<span id="hssu-clear" class="hssu-wb ephox-pastry-button" title="Clear All Text">🗑️</span>';
-                    newButtons += '<span id="hssu-quote" class="hssu-wb ephox-pastry-button" title="Quote All Public Notes">💬</span>';
-                    newButtons += '</span>';
-                    newButtons = $jq(newButtons);
-                    $('div.ephox-chameleon-toolbar').first().append(newButtons);
-
-                    $('.hssu-wb').css({
-                        'background-color': C.base_l
-                    });
-
-                    // clear button
-                    $('#hssu-clear').click(function() {
-                        // save draft
-                        $('span.ephox-pastry-button[title^="Save"]').click();
-                        // erase email body with a bad hack
-                        $('iframe.ephox-hare-content-iframe').first().contents().find('body[class^="ephox"]')[0].innerHTML = '<p><br></p>';
-                    });
-
-                    // quote button
-                    $('#hssu-quote').click(function() {
-                        quotePublicHistory();
-                    });
-                },500);
-                
-            });
-        };
-
         eventFunctions.newrequest = function() {
             let inbox = document.getElementById('Custom22');
             if (!inbox.value) {
@@ -890,7 +848,103 @@
 
             let duration = new Date().getTime() - timestart;
             return [5, duration];
+        };
 
+        eventFunctions.wysiwyg = function() {
+            // this would be much more difficult to do without jQuery
+            if (! $.fn.jquery) {
+                return [0, 0];
+            }
+            waitUntil(function detectWysiwyg() {
+                // detecting that there is a toolbar before running any of this
+                // wysywig loads asynchronously
+                return [...document.querySelectorAll('.ephox-chameleon-toolbar')].length > 0;
+            },
+            200,
+            10,
+            function makeWysiwygScrollable() {
+                // make wysywig body scrollable
+                $('iframe.ephox-hare-content-iframe').first().contents().find('body').css({
+                    'max-height': '600px',
+                    'overflow-y': 'scroll'
+                });
+            });
+            // everything to do with WYSIWYG toolbar
+            // building blocks for new toolbar
+            let btnClass = 'class="hssu-wysiwyg-btn"';
+            let icoClass = 'class="hssu-wysiwyg-ico"';
+            let newButtons = '<div id="hssu-wysiwyg">';
+            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear">🗑️</span></span>`;
+            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote">💬</span></span>`;
+            newButtons += '</div><br />';
+            // build and draw toolbar
+            $('#request_note_box_box_body').prepend($jq(newButtons));
+
+            // move update controls to toolbar
+            // keep in mind we style these in styleFunctions.reqbuttons that could get ugly
+            $('#hssu-wysiwyg').append($('div.request-sub-note-box,#sub_update,#sub_updatenclose'));
+
+            // styles for outer div
+            $('#hssu-wysiwyg').css({
+                'display': 'flex',
+                'flex-wrap': 'wrap',
+                'align-items': 'center',
+                'height': '36px',
+                'background-color': C.gray_l,
+                'border': `1px solid ${C.gray_l}`
+            });
+
+            // styles for all buttons
+            $('#hssu-wysiwyg span, #hssu-wysiwyg button').css({
+                'height': '100%',
+                'margin': '0 0 0 10px',
+                'cursor': 'pointer'
+            });
+
+            // good time to mention why i'm styling the request note box here.
+            // if this doesn't run because the jquery check fails or for any other reason,
+            // then we want any styles applicable without this function to run in reqbuttons
+            // and anything specific to the layout change to run here
+            $('.request-sub-note-box').css({
+                'height': '100%',
+                'margin': '0'
+            });
+
+            // hover for request buttons
+            $('#hssu-wysiwyg button').hover(
+                function() {$(this)[0].style.setProperty('background-color', C.base_l, 'important')},
+                styleFunctions.reqbuttons
+            );
+
+            // custom button "container" spans
+            $('.hssu-wysiwyg-btn').css({
+                'background-color': C.gray_l,
+                'height': '100%',
+                'padding': '0 10px',
+            }).hover(
+                function() {$(this).css('background-color', C.base_l)},
+                function() {$(this).css('background-color', '')}
+            );
+
+            // custom button "label" spans
+            $('.hssu-wysiwyg-ico').css({
+                'margin': '0',
+                'line-height': '34px' // todo better vertical centering
+            });
+
+            // events for new toolbar buttons
+            $('#hssu-clear').click(function() {
+                // 1. save with a bad hack
+                $('span.ephox-pastry-button[title^="Save"]').click();
+                // 2. erase with a bad hack
+                $('iframe.ephox-hare-content-iframe').first().contents().find('body[class^="ephox"]')[0].innerHTML = '<p><br></p>';
+            });
+            $('#hssu-quote').click(function() {
+                quotePublicHistory();
+            });
+
+            // TODO real return
+            return [1, 1];
         };
 
         styleFunctions.notestream = function() {
