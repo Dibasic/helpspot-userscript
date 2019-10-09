@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      1.00
+// @version      1.00.01
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
@@ -787,41 +787,39 @@
             }, 200, 10, function setWysiwyg() {
                 // This one is a pain to do without jQuery, probably
 
-                $jq('iframe.ephox-hare-content-iframe').first().contents().find('body').css({
+                $('iframe.ephox-hare-content-iframe').first().contents().find('body').css({
                     'max-height': '600px',
                     'overflow-y': 'scroll'
                 });
+                
+                // TODO find out why these buttons are disappearing without a timeout so we can use a better method
+                setTimeout(function(){
+                    let newButtons = '';
+                    newButtons += '<span id="hssu-wysiwyg" role="toolbar" class="ephox-chameleon-toolbar-group">';
+                    newButtons += '<span id="hssu-clear" class="hssu-wb ephox-pastry-button" title="Clear All Text">🗑️</span>';
+                    newButtons += '<span id="hssu-quote" class="hssu-wb ephox-pastry-button" title="Quote All Public Notes">💬</span>';
+                    newButtons += '</span>';
+                    newButtons = $jq(newButtons);
+                    $('div.ephox-chameleon-toolbar').first().append(newButtons);
 
-                let newButtons = '';
-                newButtons += '<span id="hssu-wysiwyg" role="toolbar" class="ephox-chameleon-toolbar-group">';
+                    $('.hssu-wb').css({
+                        'background-color': C.base_l
+                    });
 
-                newButtons += '<span id="hssu-clear" class="hssu-wb" title="Clear All Text">🗑️</span>';
-                newButtons += '<span id="hssu-quote" class="hssu-wb" title="Quote All Public Notes">💬</span>';
+                    // clear button
+                    $('#hssu-clear').click(function() {
+                        // save draft
+                        $('span.ephox-pastry-button[title^="Save"]').click();
+                        // erase email body with a bad hack
+                        $('iframe.ephox-hare-content-iframe').first().contents().find('body[class^="ephox"]')[0].innerHTML = '<p><br></p>';
+                    });
 
-                newButtons += '</span>';
-
-                newButtons = $jq(newButtons);
-
-                $jq('div.ephox-chameleon-toolbar').first().append(newButtons);
-
-                $jq('.hssu-wb').css({
-                    'display': 'block',
-                    'margin': '5px',
-                    'background-color': C.base_l
-                });
-
-                // clear button
-                $jq('#hssu-clear').click(function() {
-                    // save draft
-                    $jq('span.ephox-pastry-button[title^="Save"]').click();
-                    // erase email body with a bad hack
-                    $jq('iframe.ephox-hare-content-iframe').first().contents().find('body[class^="ephox"]')[0].innerHTML = '<p><br></p>';
-                });
-
-                // quote button
-                $jq('#hssu-quote').click(function() {
-                    quotePublicHistory();
-                });
+                    // quote button
+                    $('#hssu-quote').click(function() {
+                        quotePublicHistory();
+                    });
+                },500);
+                
             });
         };
 
