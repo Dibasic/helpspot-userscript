@@ -753,12 +753,22 @@
                 return 0;
             }
         };
-
         eventFunctions.reqbuttons = function() {
+            let timestart = new Date().getTime();
+
             function addRequestButtonEvent(e) {
                 e.addEventListener('click', styleFunctions.reqbuttons);
             }
-            document.querySelectorAll('.request-sub-note-box > button').forEach(addRequestButtonEvent);
+
+            // default to private note
+            changeNote('private');
+            styleFunctions.reqbuttons.call();
+
+            let buttons = document.querySelectorAll('.request-sub-note-box > button');
+            buttons.forEach(addRequestButtonEvent);
+
+            let duration = new Date().getTime() - timestart;
+            return [buttons.length, duration];
         };
 
         var tabFix = false; // track whether we've added the live lookup button tab fix yet
