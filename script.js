@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      1.00.01
+// @version      1.01.00
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 /* jshint devel: true, esnext: true, laxcomma: true, laxbreak: true, -W069 */
-/* globals $jq, hs_quote_public */
+/* globals $jq, hs_quote_public, changeNote */
 (function() {
     'use strict';
 
@@ -829,7 +829,6 @@
         };
 
         styleFunctions.reqbuttons = function() {
-
             let timestart = new Date().getTime();
 
             styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${C.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
@@ -912,7 +911,7 @@
 
             // hover for request buttons
             $('#hssu-wysiwyg button').hover(
-                function() {$(this)[0].style.setProperty('background-color', C.base_l, 'important')},
+                function() {$(this)[0].style.setProperty('background-color', C.base_l, 'important');},
                 styleFunctions.reqbuttons
             );
 
@@ -922,8 +921,8 @@
                 'height': '100%',
                 'padding': '0 10px',
             }).hover(
-                function() {$(this).css('background-color', C.base_l)},
-                function() {$(this).css('background-color', '')}
+                function() {$(this).css('background-color', C.base_l);},
+                function() {$(this).css('background-color', '');}
             );
 
             // custom button "label" spans
