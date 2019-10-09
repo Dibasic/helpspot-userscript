@@ -289,7 +289,7 @@
 
             let duration = new Date().getTime() - timestart;
 
-            return [count, duration];
+            return [count.length, duration];
         };
         styleFunctions.nogradient = function() {
 
