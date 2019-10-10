@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    helpspot
-// @version      1.01.00
+// @version      1.02.00
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
 // @grant        none
+// @require      https://kit.fontawesome.com/f90db3a7d3.js
 // ==/UserScript==
 
 /* jshint devel: true, esnext: true, laxcomma: true, laxbreak: true, -W069 */
@@ -831,19 +832,27 @@
         styleFunctions.reqbuttons = function() {
             let timestart = new Date().getTime();
 
-            styleSelectorAll('.request-sub-note-box > button', `min-width: 75px; background: ${C.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
-            let color;
-            if (1 == styleSelector('#button-public.btn-request-public',     `background: ${C.pub} !important; font-weight: bold !important`)) {
+            styleSelectorAll('.request-sub-note-box > button', `width: 72px; background: ${C.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
+            let color, icon;
+            if (1 == styleSelector('#button-public.btn-request-public',          `background: ${C.pub} !important; font-weight: bold !important`)) {
                 color = C.pub;
+                icon = '<i class="fad fa-reply-all"></i>';
             }
             else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${C.prv} !important; font-weight: bold !important`)) {
                 color = C.prv;
+                icon = '<i class="fad fa-clipboard-list"></i>';
             }
             else if (1 == styleSelector('#button-external.btn-request-external', `background: ${C.ext} !important; font-weight: bold !important`)) {
                 color = C.ext;
+                icon = '<i class="fad fa-paper-plane"></i>';
             }
             styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${C.gray_l}`);
-            styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important`);
+            styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important; padding: 0; font-size: 18px`);
+
+            document.getElementById('sub_update').innerHTML = icon;
+            document.getElementById('sub_update').title = 'Update Request';
+            document.getElementById('sub_updatenclose').innerHTML = '<i class="fad fa-window-close"></i>';
+            document.getElementById('sub_updatenclose').title = 'Update and Close';
 
             let duration = new Date().getTime() - timestart;
             return [5, duration];
@@ -873,8 +882,8 @@
             let btnClass = 'class="hssu-wysiwyg-btn"';
             let icoClass = 'class="hssu-wysiwyg-ico"';
             let newButtons = '<div id="hssu-wysiwyg">';
-            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear">🗑️</span></span>`;
-            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote">💬</span></span>`;
+            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i></span></span>`;
+            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i></span></span>`;
             newButtons += '</div><br />';
             // build and draw toolbar
             $('#request_note_box_box_body').prepend($jq(newButtons));
@@ -890,14 +899,26 @@
                 'align-items': 'center',
                 'height': '36px',
                 'background-color': C.gray_l,
-                'border': `1px solid ${C.gray_l}`
+            });
+
+            // flat styles for wysywig itself
+            $('#ephox_wysiwyg_input').css({
+                'border': 'none'
             });
 
             // styles for all buttons
             $('#hssu-wysiwyg span, #hssu-wysiwyg button').css({
                 'height': '100%',
-                'margin': '0 0 0 10px',
                 'cursor': 'pointer'
+            });
+            $('#hssu-wysiwyg span:not(:first-child), #hssu-wysiwyg button:not(:first-child)').css({
+                'margin': '0 0 0 10px'
+            });
+
+            // styles for icon buttons only (not in sub note div)
+            $('#hssu-wysiwyg > span, #hssu-wysiwyg > button').css({
+                'width': '58px', // no weird pixel math going on here, just looks nice. golden ratio of line height of 36
+                'text-align': 'center'
             });
 
             // good time to mention why i'm styling the request note box here.
@@ -909,17 +930,13 @@
                 'margin': '0'
             });
 
-            // hover for request buttons
-            $('#hssu-wysiwyg button').hover(
-                function() {$(this)[0].style.setProperty('background-color', C.base_l, 'important');},
-                styleFunctions.reqbuttons
-            );
+            // fontawesome icons
+            $('#hssu-wysiwyg i').css({'vertical-align': 'middle'});
 
             // custom button "container" spans
             $('.hssu-wysiwyg-btn').css({
                 'background-color': C.gray_l,
-                'height': '100%',
-                'padding': '0 10px',
+                'height': '100%'
             }).hover(
                 function() {$(this).css('background-color', C.base_l);},
                 function() {$(this).css('background-color', '');}
@@ -927,15 +944,23 @@
 
             // custom button "label" spans
             $('.hssu-wysiwyg-ico').css({
+                'font-size': '18px'
+            });
+            $('.hssu-wysiwyg-ico, .hssu-wysiwyg-ico i').css({
                 'margin': '0',
                 'line-height': '34px' // todo better vertical centering
             });
 
+            // Now that immediately visible changes are complete: EVENTS BELOW!
+
+            $('#hssu-wysiwyg button').hover(
+                function() {$(this)[0].style.setProperty('background-color', C.base_l, 'important');},
+                styleFunctions.reqbuttons
+            );
+
             // events for new toolbar buttons
             $('#hssu-clear').click(function() {
-                // 1. save with a bad hack
                 $('span.ephox-pastry-button[title^="Save"]').click();
-                // 2. erase with a bad hack
                 $('iframe.ephox-hare-content-iframe').first().contents().find('body[class^="ephox"]')[0].innerHTML = '<p><br></p>';
             });
             $('#hssu-quote').click(function() {
@@ -954,7 +979,6 @@
             function styleNoteStream() {
                 result = styleSelectorAll('.note-label', `border-radius: none; font-weight: bold`);
 
-
                 result += styleSelectorAll('.label-public', `background-color: ${C.pub}; color: ${C.white}`);
                 result += styleSelectorAll('.label-private', `background-color: ${C.prv}; color: ${C.white}`);
                 result += styleSelectorAll('.label-external', `background-color: ${C.ext}; color: ${C.black}`);
@@ -962,6 +986,8 @@
                 result += styleSelectorAll('.note-stream-item-public > div.note-stream-item-inner-wrap', `border-right-color: ${C.pub}`);
                 result += styleSelectorAll('.note-stream-item-private > div.note-stream-item-inner-wrap', `border-right-color: ${C.prv}`);
                 result += styleSelectorAll('.note-stream-item-external > div.note-stream-item-inner-wrap', `border-right-color: ${C.ext}`);
+
+                result += styleSelectorAll('#request_history_body img', 'max-width: 600px');
 
                 return [result, duration];
             }
