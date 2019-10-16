@@ -12,7 +12,7 @@
 // ==/UserScript==
 
 /* jshint devel: true, esnext: true, laxcomma: true, laxbreak: true, -W069 */
-/* globals $jq, hs_quote_public, changeNote */
+/* globals $jq, GM_setValue, GM_getValue, GM_log, hs_quote_public, changeNote */
 (function() {
     'use strict';
 
