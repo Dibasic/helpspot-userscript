@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.01_dev
+// @version      1.04.02_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -899,9 +899,12 @@
             .append($('#sub_update,#sub_updatenclose')) // Update Request, Update and Close
             .append($('div.request-sub-note-box-options')); // Attach, Drafts
 
-            $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
-            $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-ico');
+            // replace existing icons and text for attach/drafts buttons
+            $('div.request-sub-note-box-options a[onclick^=addAnotherFile]').html('<i class="fad fa-paperclip"></i>');
+            $('div.request-sub-note-box-options a[onclick^=draft_options_]').html('<i class="fad fa-pencil-ruler"></i>');
 
+            $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
+            $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico');
 
             // styles for outer div
             $('#hssu-wysiwyg').css({
@@ -926,9 +929,6 @@
                 'margin': '0 0 0 10px'
             });
 
-            // remove and replace existing icons
-            $('img.request-attachment').replaceWith('<i class="fad fa-paperclip"></i>');
-            $('img.request-draft').replaceWith('<i class="fad fa-pencil-ruler"></i>');
 
 
             // styles for icon buttons only (not in sub note div)
@@ -941,7 +941,7 @@
             // if this doesn't run because the jquery check fails or for any other reason,
             // then we want any styles applicable without this function to run in reqbuttons
             // and anything specific to the layout change to run here
-            $('.request-sub-note-box').css({
+            $('.request-sub-note-box, .request-sub-note-box-options').css({
                 'height': '100%',
                 'margin': '0'
             });
@@ -960,7 +960,8 @@
 
             // custom button "label" spans
             $('.hssu-wysiwyg-ico').css({
-                'font-size': '18px'
+                'font-size': '18px',
+                'color': '#272727;'
             });
             $('.hssu-wysiwyg-ico, .hssu-wysiwyg-ico i').css({
                 'margin': '0',
