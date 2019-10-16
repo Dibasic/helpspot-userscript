@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.04_dev
+// @version      1.04.05_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -922,8 +922,8 @@
 
             });
             $('hssu-wysiwyg-lbl').css({
-                'font-size', '8px';
-                'text-transform', 'uppercase'
+                'font-size': '8px';
+                'text-transform': 'uppercase'
             });
 
             // styles for outer div
