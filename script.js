@@ -837,7 +837,7 @@
             let timestart = new Date().getTime();
 
             styleSelectorAll('.request-sub-note-box > button', `width: 72px; background: ${C.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
-            let color, icon;
+            let color, icon, label;
             if (1 == styleSelector('#button-public.btn-request-public',          `background: ${C.pub} !important; font-weight: bold !important`)) {
                 color = C.pub;
                 icon = '<i class="fad fa-reply-all"></i>';
