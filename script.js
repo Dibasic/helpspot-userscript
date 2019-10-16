@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.06_dev
+// @version      1.04.07_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -885,7 +885,7 @@
             // building blocks for new toolbar
             let btnClass = 'class="hssu-wysiwyg-btn"';
             let icoClass = 'class="hssu-wysiwyg-ico"';
-            let lblClass = 'class="hssu-wysiwyg-ico"';
+            let lblClass = 'class="hssu-wysiwyg-lbl"';
             let newButtons = '<div id="hssu-wysiwyg">';
             newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i><span ${lblClass}>Clear</span></span></span>`;
             newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i><span ${lblClass}>Quote</span></span></span>`;
@@ -978,8 +978,8 @@
                 function() {$(this).css('background-color', '');}
             );
 
-            // custom button "label" spans
-            $('.hssu-wysiwyg-ico').css({
+            // custom button "icon" spans
+            $('.hssu-wysiwyg-ico i').css({
                 'font-size': '18px',
                 'color': '#272727;'
             });
