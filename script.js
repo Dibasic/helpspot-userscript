@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.14_dev
+// @version      1.04.15_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -867,8 +867,9 @@
                 'justify-content': 'space-between',
                 'align-items': 'center'
             });
-            $('.hssu-recbutton-ico').css({
-                'line-height': '26px'
+            $('.hssu-recbutton-ico i').css({
+                'line-height': '26px',
+                'vertical-align': 'middle'
             });
             $('#sub_update span.hssu-reqbutton-lbl, #sub_updatenclose span.hssu-reqbutton-lbl').css({
                 'font-size': '8px',
