@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.09_dev
+// @version      1.04.10_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -945,7 +945,7 @@
                 'height': '100%',
                 'cursor': 'pointer'
             });
-            $('#hssu-wysiwyg span:not(:first-child), #hssu-wysiwyg button:not(:first-child), #hssu-wysiwyg div:not(:first-child)').css({
+            $('#hssu-wysiwyg span, #hssu-wysiwyg button, #hssu-wysiwyg div').not(':first-child').not('.hssu-wysiwyg-lbl').css({
                 'margin': '0 0 0 10px'
             });
 
@@ -983,9 +983,9 @@
                 'font-size': '18px',
                 'color': '#272727;'
             });
-            $('.hssu-wysiwyg-ico, .hssu-wysiwyg-ico i').css({
+            $('.hssu-wysiwyg-ico i').css({
                 'margin': '0',
-                'line-height': '34px' // todo better vertical centering
+                'line-height': '26px' // todo better vertical centering
             });
 
             // Now that immediately visible changes are complete: EVENTS ARE BELOW!
