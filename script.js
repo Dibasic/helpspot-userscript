@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.02_dev
+// @version      1.04.03_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -904,7 +904,7 @@
             $('div.request-sub-note-box-options a[onclick^=draft_options_]').html('<i class="fad fa-pencil-ruler"></i>');
 
             $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
-            $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico');
+            $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico').css('padding', '');
 
             // styles for outer div
             $('#hssu-wysiwyg').css({
