@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.03.01
+// @version      1.04.00_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -894,7 +894,11 @@
 
             // move update controls to toolbar
             // keep in mind we style these in styleFunctions.reqbuttons that could get ugly
-            $('#hssu-wysiwyg').append($('div.request-sub-note-box,#sub_update,#sub_updatenclose'));
+            $('#hssu-wysiwyg')
+            .append($('div.request-sub-note-box')) // Public, Private, External
+            .append($('#sub_update,#sub_updatenclose')) // Update Request, Update and Close
+            .append($('div.request-sub-note-box-options')); // Attach, Drafts
+
 
             // styles for outer div
             $('#hssu-wysiwyg').css({
