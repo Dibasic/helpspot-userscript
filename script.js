@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.03_dev
+// @version      1.04.04_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -885,9 +885,13 @@
             // building blocks for new toolbar
             let btnClass = 'class="hssu-wysiwyg-btn"';
             let icoClass = 'class="hssu-wysiwyg-ico"';
+            let lblClass = 'class="hssu-wysiwyg-ico"';
             let newButtons = '<div id="hssu-wysiwyg">';
-            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i></span></span>`;
-            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i></span></span>`;
+            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i></span><span ${lblClass}>Clear</span></span>`;
+            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i></span><span ${lblClass}>Quote</span></span>`;
+            newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hssu-attach"><i class="fad fa-trash"></i></span><span ${lblClass}>Attach</span></span>`;
+            newButtons += `<span ${btnClass} title="Save Draft"><span ${icoClass} id="hssu-save"><i class="fad fa-save"></i></span><span ${lblClass}>Save</span></span>`;
+            newButtons += `<span ${btnClass} title="Restore Draft" onclick="draft_options_box();return false;"><span ${icoClass} id="hssu-restore"><i class="fad fa-trash-undo"></i></span><span ${lblClass}>Restore</span></span>`;
             newButtons += '</div><br />';
             // build and draw toolbar
             $('#request_note_box_box_body').prepend($jq(newButtons));
@@ -896,15 +900,31 @@
             // keep in mind we style these in styleFunctions.reqbuttons that could get ugly
             $('#hssu-wysiwyg')
             .append($('div.request-sub-note-box')) // Public, Private, External
-            .append($('#sub_update,#sub_updatenclose')) // Update Request, Update and Close
-            .append($('div.request-sub-note-box-options')); // Attach, Drafts
+            .append($('#sub_update,#sub_updatenclose')); // Update Request, Update and Close
+
+            $('div.request-sub-note-box-options').remove(); // Attach, Drafts
 
             // replace existing icons and text for attach/drafts buttons
             $('div.request-sub-note-box-options a[onclick^=addAnotherFile]').html('<i class="fad fa-paperclip"></i>');
             $('div.request-sub-note-box-options a[onclick^=draft_options_]').html('<i class="fad fa-pencil-ruler"></i>');
 
             $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
-            $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico').css('padding', '');
+            $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico').css('padding', '0px');
+
+            // position labels via flexbox
+            $('hssu-wysiwyg-btn').css({
+                'display': 'flex',
+                'flex-flow': 'column nowrap',
+                'justify-content': 'space-between',
+                'align-items': 'center'
+            });
+            $('hssu-wysiwyg-ico').css({
+
+            });
+            $('hssu-wysiwyg-lbl').css({
+                'font-size', '8px';
+                'text-transform', 'uppercase'
+            });
 
             // styles for outer div
             $('#hssu-wysiwyg').css({
@@ -982,6 +1002,9 @@
             });
             $('#hssu-quote').click(function() {
                 quotePublicHistory();
+            });
+            $('#hssu-save').click(function() {
+                $('span.ephox-pastry-button[title^="Save"]').click();
             });
 
             // TODO real return
