@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.10_dev
+// @version      1.04.11_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -841,21 +841,24 @@
             if (1 == styleSelector('#button-public.btn-request-public',          `background: ${C.pub} !important; font-weight: bold !important`)) {
                 color = C.pub;
                 icon = '<i class="fad fa-reply-all"></i>';
+                label = '<span class="hssu-wysiwyg-lbl">SEND</span>';
             }
             else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${C.prv} !important; font-weight: bold !important`)) {
                 color = C.prv;
                 icon = '<i class="fad fa-clipboard-list"></i>';
+                label = '<span class="hssu-wysiwyg-lbl">NOTE</span>';
             }
             else if (1 == styleSelector('#button-external.btn-request-external', `background: ${C.ext} !important; font-weight: bold !important`)) {
                 color = C.ext;
                 icon = '<i class="fad fa-paper-plane"></i>';
+                label = '<span class="hssu-wysiwyg-lbl">FWD</span>';
             }
             styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${C.gray_l}`);
             styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important; padding: 0; font-size: 18px`);
 
-            document.getElementById('sub_update').innerHTML = icon;
+            document.getElementById('sub_update').innerHTML = icon + label;
             document.getElementById('sub_update').title = 'Update Request';
-            document.getElementById('sub_updatenclose').innerHTML = '<i class="fad fa-window-close"></i>';
+            document.getElementById('sub_updatenclose').innerHTML = '<i class="fad fa-window-close"></i><span class="hssu-wysiwyg-lbl>CLOSE</span>';
             document.getElementById('sub_updatenclose').title = 'Update and Close';
 
             let duration = new Date().getTime() - timestart;
