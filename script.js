@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.11_dev
+// @version      1.04.12_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -841,25 +841,39 @@
             if (1 == styleSelector('#button-public.btn-request-public',          `background: ${C.pub} !important; font-weight: bold !important`)) {
                 color = C.pub;
                 icon = '<i class="fad fa-reply-all"></i>';
-                label = '<span class="hssu-wysiwyg-lbl">SEND</span>';
+                label = '<span class="hssu-reqbutton-lbl">SEND</span>';
             }
             else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${C.prv} !important; font-weight: bold !important`)) {
                 color = C.prv;
                 icon = '<i class="fad fa-clipboard-list"></i>';
-                label = '<span class="hssu-wysiwyg-lbl">NOTE</span>';
+                label = '<span class="hssu-reqbutton-lbl">NOTE</span>';
             }
             else if (1 == styleSelector('#button-external.btn-request-external', `background: ${C.ext} !important; font-weight: bold !important`)) {
                 color = C.ext;
                 icon = '<i class="fad fa-paper-plane"></i>';
-                label = '<span class="hssu-wysiwyg-lbl">FWD</span>';
+                label = '<span class="hssu-reqbutton-lbl">FWD</span>';
             }
             styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${C.gray_l}`);
             styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important; padding: 0; font-size: 18px`);
 
             document.getElementById('sub_update').innerHTML = icon + label;
             document.getElementById('sub_update').title = 'Update Request';
-            document.getElementById('sub_updatenclose').innerHTML = '<i class="fad fa-window-close"></i><span class="hssu-wysiwyg-lbl>CLOSE</span>';
+            document.getElementById('sub_updatenclose').innerHTML = '<i class="fad fa-window-close"></i><span class="hssu-reqbutton-lbl">CLOSE</span>';
             document.getElementById('sub_updatenclose').title = 'Update and Close';
+
+            $('#sub_update, #sub_updatenclose').css({
+                'display': 'flex',
+                'flex-flow': 'column nowrap',
+                'justify-content': 'space-between',
+                'align-items': 'center'
+            });
+            $('.hssu-recbutton-ico').css({
+                'line-height': '26px'
+            });
+            $('.hssu-recbutton-lbl').css({
+                'font-size': '8px',
+                'text-transform': 'uppercase'
+            });
 
             let duration = new Date().getTime() - timestart;
             return [5, duration];
@@ -914,8 +928,20 @@
             $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
             $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico').css('padding', '0px');
 
+
+
+            $('#sub_update, #sub_updatenclose').css({
+                'line-height': '26px'
+            });
+            $('#sub_update, #sub_updatenclose').is('span').css({
+                'font-size': '8px'
+            });
+            $('#sub_update, #sub_updatenclose').is('i').css({
+
+            });
+
             // position labels via flexbox
-            $('.hssu-wysiwyg-btn').css({
+            $('.hssu-wysiwyg-btn, #sub_update, #sub_updatenclose').css({
                 'display': 'flex',
                 'flex-flow': 'column nowrap',
                 'justify-content': 'space-between',
