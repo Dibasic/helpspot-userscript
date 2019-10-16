@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.12_dev
+// @version      1.04.13_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -933,10 +933,10 @@
             $('#sub_update, #sub_updatenclose').css({
                 'line-height': '26px'
             });
-            $('#sub_update, #sub_updatenclose').is('span').css({
+            $('#sub_update span, #sub_updatenclose span').css({
                 'font-size': '8px'
             });
-            $('#sub_update, #sub_updatenclose').is('i').css({
+            $('#sub_update i, #sub_updatenclose i').css({
 
             });
 
