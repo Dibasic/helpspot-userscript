@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.05_dev
+// @version      1.04.06_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -887,11 +887,11 @@
             let icoClass = 'class="hssu-wysiwyg-ico"';
             let lblClass = 'class="hssu-wysiwyg-ico"';
             let newButtons = '<div id="hssu-wysiwyg">';
-            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i></span><span ${lblClass}>Clear</span></span>`;
-            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i></span><span ${lblClass}>Quote</span></span>`;
-            newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hssu-attach"><i class="fad fa-trash"></i></span><span ${lblClass}>Attach</span></span>`;
-            newButtons += `<span ${btnClass} title="Save Draft"><span ${icoClass} id="hssu-save"><i class="fad fa-save"></i></span><span ${lblClass}>Save</span></span>`;
-            newButtons += `<span ${btnClass} title="Restore Draft" onclick="draft_options_box();return false;"><span ${icoClass} id="hssu-restore"><i class="fad fa-trash-undo"></i></span><span ${lblClass}>Restore</span></span>`;
+            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i><span ${lblClass}>Clear</span></span></span>`;
+            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i><span ${lblClass}>Quote</span></span></span>`;
+            newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hssu-attach"><i class="fad fa-trash"></i><span ${lblClass}>Attach</span></span></span>`;
+            newButtons += `<span ${btnClass} title="Save Draft"><span ${icoClass} id="hssu-save"><i class="fad fa-save"></i><span ${lblClass}>Save</span></span></span>`;
+            newButtons += `<span ${btnClass} title="Restore Draft" onclick="draft_options_box();return false;"><span ${icoClass} id="hssu-restore"><i class="fad fa-trash-undo"></i><span ${lblClass}>Restore</span></span></span>`;
             newButtons += '</div><br />';
             // build and draw toolbar
             $('#request_note_box_box_body').prepend($jq(newButtons));
@@ -922,7 +922,7 @@
 
             });
             $('hssu-wysiwyg-lbl').css({
-                'font-size': '8px';
+                'font-size': '8px',
                 'text-transform': 'uppercase'
             });
 
@@ -932,7 +932,7 @@
                 'flex-wrap': 'wrap',
                 'align-items': 'center',
                 'height': '36px',
-                'background-color': C.gray_l,
+                'background-color': C.gray_l
             });
 
             // flat styles for wysywig itself
