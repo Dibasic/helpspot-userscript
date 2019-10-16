@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.07_dev
+// @version      1.04.08_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -889,7 +889,7 @@
             let newButtons = '<div id="hssu-wysiwyg">';
             newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i><span ${lblClass}>Clear</span></span></span>`;
             newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i><span ${lblClass}>Quote</span></span></span>`;
-            newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hssu-attach"><i class="fad fa-trash"></i><span ${lblClass}>Attach</span></span></span>`;
+            newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hssu-attach"><i class="fad fa-paperclip"></i><span ${lblClass}>Attach</span></span></span>`;
             newButtons += `<span ${btnClass} title="Save Draft"><span ${icoClass} id="hssu-save"><i class="fad fa-save"></i><span ${lblClass}>Save</span></span></span>`;
             newButtons += `<span ${btnClass} title="Restore Draft" onclick="draft_options_box();return false;"><span ${icoClass} id="hssu-restore"><i class="fad fa-trash-undo"></i><span ${lblClass}>Restore</span></span></span>`;
             newButtons += '</div><br />';
@@ -912,16 +912,16 @@
             $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico').css('padding', '0px');
 
             // position labels via flexbox
-            $('hssu-wysiwyg-btn').css({
+            $('.hssu-wysiwyg-btn').css({
                 'display': 'flex',
                 'flex-flow': 'column nowrap',
                 'justify-content': 'space-between',
                 'align-items': 'center'
             });
-            $('hssu-wysiwyg-ico').css({
+            $('.hssu-wysiwyg-ico').css({
 
             });
-            $('hssu-wysiwyg-lbl').css({
+            $('.hssu-wysiwyg-lbl').css({
                 'font-size': '8px',
                 'text-transform': 'uppercase'
             });
