@@ -4,7 +4,7 @@
 // @version      1.03.00_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
-// @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
+// @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_log
