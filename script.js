@@ -1,18 +1,22 @@
 // ==UserScript==
 // @name         HelpSpot styling
-// @namespace    helpspot
-// @version      1.02.00
+// @namespace    hssu
+// @version      1.03.01
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
-// @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))/
-// @grant        none
+// @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_log
 // @require      https://kit.fontawesome.com/f90db3a7d3.js
 // ==/UserScript==
 
 /* jshint devel: true, esnext: true, laxcomma: true, laxbreak: true, -W069 */
-/* globals $jq, hs_quote_public, changeNote */
+/* globals $jq, GM_setValue, GM_getValue, GM_log, hs_quote_public, changeNote */
 (function() {
     'use strict';
+
+    var STORAGE_KEY = 'hsreq';
 
     // grab their jquery instance
     // ancient! going to avoid for compatibility/awful unsearchable bugs
@@ -31,14 +35,14 @@
     function main() {
         readStorage();
 
-        console.log('HelpSpot page detected. Running styling now.');
+        GM_log('HelpSpot page detected. Running styling now.');
         const url = document.URL;
         const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=([^&]*)(?:&(?:show|reqid)=(\w+))?/;
         const match = url.match(pattern);
 
         let pg = match[1] || 'err';
         let arg = match[2] || 'err';
-        console.log('> Page: ' + pg + '\n> Argument: ' + arg);
+        GM_log('> Page: ' + pg + '\n> Argument: ' + arg);
 
         setColor();
 
@@ -62,7 +66,7 @@
         // Just any condition that helps us tell if we've styled the page already or not.
         let headers = document.querySelector('tr.tableheaders');
         if (!headers.getAttribute('token')) {
-            console.log('detected refresh - running runStyleFunctions()');
+            GM_log('detected refresh - running runStyleFunctions()');
             runStyleFunctions();
             // Set that condition again
             headers.setAttribute('token', true);
@@ -234,39 +238,39 @@
     }
 
     function readStorage() {
-        let item = localStorage.getItem('hsreq');
+        let item = GM_getValue(STORAGE_KEY);
         if (item) {
             storage = JSON.parse(item);
         }
         else {
-            localStorage.setItem('hsreq', '{}');
+            GM_setValue(STORAGE_KEY, '{}');
         }
     }
 
     function writeStorage() {
-        localStorage.setItem('hsreq', JSON.stringify(storage));
+        GM_setValue(STORAGE_KEY, JSON.stringify(storage));
     }
 
     // Wait until condition returns true, then run onSuccess; if timed out, run onFail
     function waitUntil(condition, delay, maxAttempts, onSuccess, onFail) {
-        console.debug(`- - - waitUntil to run ${onSuccess.name} - trying ${condition.name} up to ${maxAttempts} times over up to ${delay * maxAttempts}ms`);
+        GM_log(`- - - waitUntil to run ${onSuccess.name} - trying ${condition.name} up to ${maxAttempts} times over up to ${delay * maxAttempts}ms`);
         let attempts = 0;
         function attempt() {
             setTimeout(function() {
-                console.debug(`- - - - Attempting ${condition.name} to run ${onSuccess.name} (attempt ${attempts + 1} of ${maxAttempts})...`);
+                GM_log(`- - - - Attempting ${condition.name} to run ${onSuccess.name} (attempt ${attempts + 1} of ${maxAttempts})...`);
                 if (condition()) {
-                    console.debug(`- - - - - Success: ${onSuccess.name} returned ${onSuccess()} after ${attempts * delay}ms`);
+                    GM_log(`- - - - - Success: ${onSuccess.name} returned ${onSuccess()} after ${attempts * delay}ms`);
                 }
                 else if (++attempts < maxAttempts) {
                     attempt();
                 }
                 else {
-                    console.debug('- - - - Maximum attempts reached:');
-                    console.debug(`- - - - - condition: ${condition.name} (currently: ${condition()})`);
-                    console.debug('- - - - - delay per attempt: ' + delay);
-                    console.debug('- - - - - attempts taken: ' + attempts);
-                    console.debug('- - - - - onSuccess: ' + onSuccess.name);
-                    console.debug(`- - - - - onFail: ${onFail ? `${onFail.name} returned ${onFail()}` : 'not defined'}`);
+                    GM_log('- - - - Maximum attempts reached:');
+                    GM_log(`- - - - - condition: ${condition.name} (currently: ${condition()})`);
+                    GM_log('- - - - - delay per attempt: ' + delay);
+                    GM_log('- - - - - attempts taken: ' + attempts);
+                    GM_log('- - - - - onSuccess: ' + onSuccess.name);
+                    GM_log(`- - - - - onFail: ${onFail ? `${onFail.name} returned ${onFail()}` : 'not defined'}`);
                 }
             }, delay);
         }
@@ -715,7 +719,7 @@
             return [result.length, duration];
         };
 
-        console.log('> Workspace view detected. Applying workspace styling.');
+        GM_log('> Workspace view detected. Applying workspace styling.');
     }
 
     function request() {
@@ -1008,7 +1012,7 @@
             return [result, duration];
         };
 
-        console.log('> Request view detected. Applying request styling.');
+        GM_log('> Request view detected. Applying request styling.');
     }
 
     function runStyleFunctions() {
@@ -1021,14 +1025,14 @@
                 incr = result[0];
                 count += incr;
             }
-            console.log(`> > ${fn} updated ${incr} elements in ${result && result[1] ? result[1] : '?'}ms`);
+            GM_log(`> > ${fn} updated ${incr} elements in ${result && result[1] ? result[1] : '?'}ms`);
         });
         let duration = new Date().getTime() - starttime;
-        console.log(`> styleFunctions updated at least ${count} elements in ${duration}ms`);
+        GM_log(`> styleFunctions updated at least ${count} elements in ${duration}ms`);
     }
 
     function runEventFunctions() {
-        Object.keys(eventFunctions).forEach(fn => console.log('> > ' + fn + ' created event for ' + eventFunctions[fn].call() + ' elements'));
+        Object.keys(eventFunctions).forEach(fn => GM_log('> > ' + fn + ' created event for ' + eventFunctions[fn].call() + ' elements'));
     }
 
     main();
