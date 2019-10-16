@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.17_dev
+// @version      1.04.19_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -922,11 +922,6 @@
 
             $('div.request-sub-note-box-options').remove(); // Attach, Drafts
 
-            $('#hssu-wysiwyg').append($('<span id="hssu-wysiwyg-status"></span>'));
-            $('#hssu-wysiwyg-status').css({
-                'margin': '0 10px'
-            });
-
             // replace existing icons and text for attach/drafts buttons
             $('div.request-sub-note-box-options a[onclick^=addAnotherFile]').html('<i class="fad fa-paperclip"></i>');
             $('div.request-sub-note-box-options a[onclick^=draft_options_]').html('<i class="fad fa-pencil-ruler"></i>');
@@ -968,7 +963,7 @@
                 'height': '100%',
                 'cursor': 'pointer'
             });
-            $('#hssu-wysiwyg span, #hssu-wysiwyg button, #hssu-wysiwyg div').not(':first-child').not('.hssu-wysiwyg-lbl').css({
+            $('#hssu-wysiwyg span, #hssu-wysiwyg > button, #hssu-wysiwyg div').not(':first-child').not('.hssu-wysiwyg-lbl').css({
                 'margin': '0 0 0 10px'
             });
 
@@ -983,7 +978,9 @@
             // then we want any styles applicable without this function to run in reqbuttons
             // and anything specific to the layout change to run here
             $('.request-sub-note-box, .request-sub-note-box-options').css({
-                'height': '100%',
+                'height': '100%'
+            });
+            $('.request-sub-note-box-options').css({
                 'margin': '0'
             });
 
@@ -1032,7 +1029,13 @@
                 $('#hssu-wysiwyg-status').text($('#email_customer_msg').text());
                 $('#hssu-wysiwyg-status')[0].className = $('#email_customer_msg')[0].className;
             }
-            setInterval(updateEmailStatus, 500);
+            $('#hssu-wysiwyg').append($('<span id="hssu-wysiwyg-status"></span>'));
+            $('#hssu-wysiwyg-status').css({
+                'margin': '0 10px',
+                'width': '',
+                'height': ''
+            });
+            setInterval(updateEmailStatus, 200);
 
             // TODO real return
             return [1, 1];
