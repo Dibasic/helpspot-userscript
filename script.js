@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.16_dev
+// @version      1.04.17_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -872,7 +872,7 @@
                 'vertical-align': 'middle'
             });
             $('#sub_update span.hssu-reqbutton-lbl, #sub_updatenclose span.hssu-reqbutton-lbl').css({
-                'font-size': '8px',
+                'font-size': '9px',
                 'text-transform': 'uppercase'
             });
 
@@ -922,18 +922,17 @@
 
             $('div.request-sub-note-box-options').remove(); // Attach, Drafts
 
+            $('#hssu-wysiwyg').append($('<span id="hssu-wysiwyg-status"></span>'));
+            $('#hssu-wysiwyg-status').css({
+                'margin': '0 10px'
+            });
+
             // replace existing icons and text for attach/drafts buttons
             $('div.request-sub-note-box-options a[onclick^=addAnotherFile]').html('<i class="fad fa-paperclip"></i>');
             $('div.request-sub-note-box-options a[onclick^=draft_options_]').html('<i class="fad fa-pencil-ruler"></i>');
 
             $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
             $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico').css('padding', '0px');
-
-
-
-            $('#sub_update i, #sub_updatenclose i').css({
-
-            });
 
             // position labels via flexbox
             $('.hssu-wysiwyg-btn, #sub_update, #sub_updatenclose').css({
@@ -946,7 +945,7 @@
 
             });
             $('.hssu-wysiwyg-lbl').css({
-                'font-size': '8px',
+                'font-size': '9px',
                 'text-transform': 'uppercase'
             });
 
@@ -972,8 +971,6 @@
             $('#hssu-wysiwyg span, #hssu-wysiwyg button, #hssu-wysiwyg div').not(':first-child').not('.hssu-wysiwyg-lbl').css({
                 'margin': '0 0 0 10px'
             });
-
-
 
             // styles for icon buttons only (not in sub note div)
             $('#hssu-wysiwyg > span, #hssu-wysiwyg > button').css({
@@ -1030,6 +1027,12 @@
             $('#hssu-save').click(function() {
                 $('span.ephox-pastry-button[title^="Save"]').click();
             });
+
+            function updateEmailStatus() {
+                $('#hssu-wysiwyg-status').text($('#email_customer_msg').text());
+                $('#hssu-wysiwyg-status')[0].className = $('#email_customer_msg')[0].className;
+            }
+            setInterval(updateEmailStatus, 500);
 
             // TODO real return
             return [1, 1];
