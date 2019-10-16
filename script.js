@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.04.00_dev
+// @version      1.04.01_dev
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -899,6 +899,9 @@
             .append($('#sub_update,#sub_updatenclose')) // Update Request, Update and Close
             .append($('div.request-sub-note-box-options')); // Attach, Drafts
 
+            $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
+            $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-ico');
+
 
             // styles for outer div
             $('#hssu-wysiwyg').css({
@@ -919,9 +922,14 @@
                 'height': '100%',
                 'cursor': 'pointer'
             });
-            $('#hssu-wysiwyg span:not(:first-child), #hssu-wysiwyg button:not(:first-child)').css({
+            $('#hssu-wysiwyg span:not(:first-child), #hssu-wysiwyg button:not(:first-child), #hssu-wysiwyg div:not(:first-child)').css({
                 'margin': '0 0 0 10px'
             });
+
+            // remove and replace existing icons
+            $('img.request-attachment').replaceWith('<i class="fad fa-paperclip"></i>');
+            $('img.request-draft').replaceWith('<i class="fad fa-pencil-ruler"></i>');
+
 
             // styles for icon buttons only (not in sub note div)
             $('#hssu-wysiwyg > span, #hssu-wysiwyg > button').css({
@@ -959,7 +967,7 @@
                 'line-height': '34px' // todo better vertical centering
             });
 
-            // Now that immediately visible changes are complete: EVENTS BELOW!
+            // Now that immediately visible changes are complete: EVENTS ARE BELOW!
 
             $('#hssu-wysiwyg button').hover(
                 function() {$(this)[0].style.setProperty('background-color', C.base_l, 'important');},
