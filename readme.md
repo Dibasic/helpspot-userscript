@@ -1,4 +1,4 @@
-# HelpSpot Style Userscript
+# HelpSpot UserScript
 
 This script provides some formatting and display tweaks for HelpSpot workspaces and requests. It was made for our specific HelpSpot implementation, but with a little bit of JavaScript and RegEx you should be able to adapt it for your implementation, too.
 
