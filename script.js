@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HelpSpot styling
 // @namespace    hssu
-// @version      1.03.01
+// @version      1.04.19
 // @description  style helpspot interface
 // @author       Ethan Jorgensen
 // @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
@@ -837,26 +837,44 @@
             let timestart = new Date().getTime();
 
             styleSelectorAll('.request-sub-note-box > button', `width: 72px; background: ${C.gray_l} !important; text-shadow: none !important; font-weight: normal !important; background-image: none !important`);
-            let color, icon;
+            let color, icon, label;
             if (1 == styleSelector('#button-public.btn-request-public',          `background: ${C.pub} !important; font-weight: bold !important`)) {
                 color = C.pub;
                 icon = '<i class="fad fa-reply-all"></i>';
+                label = '<span class="hssu-reqbutton-lbl">SEND</span>';
             }
             else if (1 == styleSelector('#button-private.btn-request-private',   `background: ${C.prv} !important; font-weight: bold !important`)) {
                 color = C.prv;
                 icon = '<i class="fad fa-clipboard-list"></i>';
+                label = '<span class="hssu-reqbutton-lbl">NOTE</span>';
             }
             else if (1 == styleSelector('#button-external.btn-request-external', `background: ${C.ext} !important; font-weight: bold !important`)) {
                 color = C.ext;
                 icon = '<i class="fad fa-paper-plane"></i>';
+                label = '<span class="hssu-reqbutton-lbl">FWD</span>';
             }
             styleSelectorAll('.request-sub-note-box > button:not(.btn-request-public):not(.btn-request-private):not(.btn-request-external)', `background-color: ${C.gray_l}`);
             styleSelectorAll('#sub_update, #sub_updatenclose', `background-color: ${color} !important; text-shadow: none !important; background-image: none !important; padding: 0; font-size: 18px`);
 
-            document.getElementById('sub_update').innerHTML = icon;
+            document.getElementById('sub_update').innerHTML = icon + label;
             document.getElementById('sub_update').title = 'Update Request';
-            document.getElementById('sub_updatenclose').innerHTML = '<i class="fad fa-window-close"></i>';
+            document.getElementById('sub_updatenclose').innerHTML = '<i class="fad fa-window-close"></i><span class="hssu-reqbutton-lbl">CLOSE</span>';
             document.getElementById('sub_updatenclose').title = 'Update and Close';
+
+            $('#sub_update, #sub_updatenclose').css({
+                'display': 'flex',
+                'flex-flow': 'column nowrap',
+                'justify-content': 'space-between',
+                'align-items': 'center'
+            });
+            $('#sub_update i, #sub_updatenclose i').css({
+                'line-height': '26px',
+                'vertical-align': 'middle'
+            });
+            $('#sub_update span.hssu-reqbutton-lbl, #sub_updatenclose span.hssu-reqbutton-lbl').css({
+                'font-size': '9px',
+                'text-transform': 'uppercase'
+            });
 
             let duration = new Date().getTime() - timestart;
             return [5, duration];
@@ -885,16 +903,46 @@
             // building blocks for new toolbar
             let btnClass = 'class="hssu-wysiwyg-btn"';
             let icoClass = 'class="hssu-wysiwyg-ico"';
+            let lblClass = 'class="hssu-wysiwyg-lbl"';
             let newButtons = '<div id="hssu-wysiwyg">';
-            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i></span></span>`;
-            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i></span></span>`;
+            newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hssu-clear"><i class="fad fa-trash"></i></span><span ${lblClass}>Clear</span></span>`;
+            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hssu-quote"><i class="fad fa-quote-right"></i></span><span ${lblClass}>Quote</span></span>`;
+            newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hssu-attach"><i class="fad fa-paperclip"></i></span><span ${lblClass}>Attach</span></span>`;
+            newButtons += `<span ${btnClass} title="Save Draft"><span ${icoClass} id="hssu-save"><i class="fad fa-save"></i></span><span ${lblClass}>Save</span></span>`;
+            newButtons += `<span ${btnClass} title="Restore Draft" onclick="draft_options_box();return false;"><span ${icoClass} id="hssu-restore"><i class="fad fa-trash-undo"></i></span><span ${lblClass}>Restore</span></span>`;
             newButtons += '</div><br />';
             // build and draw toolbar
             $('#request_note_box_box_body').prepend($jq(newButtons));
 
             // move update controls to toolbar
             // keep in mind we style these in styleFunctions.reqbuttons that could get ugly
-            $('#hssu-wysiwyg').append($('div.request-sub-note-box,#sub_update,#sub_updatenclose'));
+            $('#hssu-wysiwyg')
+            .append($('div.request-sub-note-box')) // Public, Private, External
+            .append($('#sub_update,#sub_updatenclose')); // Update Request, Update and Close
+
+            $('div.request-sub-note-box-options').remove(); // Attach, Drafts
+
+            // replace existing icons and text for attach/drafts buttons
+            $('div.request-sub-note-box-options a[onclick^=addAnotherFile]').html('<i class="fad fa-paperclip"></i>');
+            $('div.request-sub-note-box-options a[onclick^=draft_options_]').html('<i class="fad fa-pencil-ruler"></i>');
+
+            $('div.request-sub-note-box-options li').addClass('hssu-wysiwyg-btn');
+            $('div.request-sub-note-box-options a').addClass('hssu-wysiwyg-ico').css('padding', '0px');
+
+            // position labels via flexbox
+            $('.hssu-wysiwyg-btn, #sub_update, #sub_updatenclose').css({
+                'display': 'flex',
+                'flex-flow': 'column nowrap',
+                'justify-content': 'space-between',
+                'align-items': 'center'
+            });
+            $('.hssu-wysiwyg-ico').css({
+
+            });
+            $('.hssu-wysiwyg-lbl').css({
+                'font-size': '9px',
+                'text-transform': 'uppercase'
+            });
 
             // styles for outer div
             $('#hssu-wysiwyg').css({
@@ -902,7 +950,7 @@
                 'flex-wrap': 'wrap',
                 'align-items': 'center',
                 'height': '36px',
-                'background-color': C.gray_l,
+                'background-color': C.gray_l
             });
 
             // flat styles for wysywig itself
@@ -915,7 +963,7 @@
                 'height': '100%',
                 'cursor': 'pointer'
             });
-            $('#hssu-wysiwyg span:not(:first-child), #hssu-wysiwyg button:not(:first-child)').css({
+            $('#hssu-wysiwyg span, #hssu-wysiwyg > button, #hssu-wysiwyg div').not(':first-child').not('.hssu-wysiwyg-lbl').css({
                 'margin': '0 0 0 10px'
             });
 
@@ -929,8 +977,10 @@
             // if this doesn't run because the jquery check fails or for any other reason,
             // then we want any styles applicable without this function to run in reqbuttons
             // and anything specific to the layout change to run here
-            $('.request-sub-note-box').css({
-                'height': '100%',
+            $('.request-sub-note-box, .request-sub-note-box-options').css({
+                'height': '100%'
+            });
+            $('.request-sub-note-box-options').css({
                 'margin': '0'
             });
 
@@ -946,16 +996,17 @@
                 function() {$(this).css('background-color', '');}
             );
 
-            // custom button "label" spans
-            $('.hssu-wysiwyg-ico').css({
-                'font-size': '18px'
+            // custom button "icon" spans
+            $('.hssu-wysiwyg-ico i').css({
+                'font-size': '18px',
+                'color': '#272727;'
             });
-            $('.hssu-wysiwyg-ico, .hssu-wysiwyg-ico i').css({
+            $('.hssu-wysiwyg-ico i').css({
                 'margin': '0',
-                'line-height': '34px' // todo better vertical centering
+                'line-height': '26px' // todo better vertical centering
             });
 
-            // Now that immediately visible changes are complete: EVENTS BELOW!
+            // Now that immediately visible changes are complete: EVENTS ARE BELOW!
 
             $('#hssu-wysiwyg button').hover(
                 function() {$(this)[0].style.setProperty('background-color', C.base_l, 'important');},
@@ -970,6 +1021,21 @@
             $('#hssu-quote').click(function() {
                 quotePublicHistory();
             });
+            $('#hssu-save').click(function() {
+                $('span.ephox-pastry-button[title^="Save"]').click();
+            });
+
+            function updateEmailStatus() {
+                $('#hssu-wysiwyg-status').text($('#email_customer_msg').text());
+                $('#hssu-wysiwyg-status')[0].className = $('#email_customer_msg')[0].className;
+            }
+            $('#hssu-wysiwyg').append($('<span id="hssu-wysiwyg-status"></span>'));
+            $('#hssu-wysiwyg-status').css({
+                'margin': '0 10px',
+                'width': '',
+                'height': ''
+            });
+            setInterval(updateEmailStatus, 200);
 
             // TODO real return
             return [1, 1];
