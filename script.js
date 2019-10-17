@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.10.00
+// @version      1.10.01
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -868,7 +868,7 @@
                 if (e.innerText.startsWith('Courseleaf ')) {
                     e.innerText = e.innerText.substring(11);
                     if (e.innerText === 'FocusSearch') {
-                        e.innerText = 'FSearch';
+                        e.innerText = 'FoSe';
                     }
                 }
                 e.style['font-size'] = '14px';
