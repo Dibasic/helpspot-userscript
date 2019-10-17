@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.10.00_dev
+// @version      1.10.00
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -51,8 +51,7 @@
             + ` © ${GM_info.script.author} (MIT)`
             + ` To report an issue, please visit ${GM_info.script.supportURL}`
         );
-        GM_log(GM_info);
-        GM_log('HelpSpot page detected. Running styling now.');
+        
         const url = document.URL;
         const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=([^&]*)(?:&(?:show|reqid)=(\w+))?/;
         const match = url.match(pattern);
