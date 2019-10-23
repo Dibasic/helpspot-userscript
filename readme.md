@@ -45,7 +45,7 @@ Once installed, the script should automatically update itself when a new version
 
 3. Navigate to the Utilities tab
 
-4. In "Install from URL", enter the URL for the raw contents of script.js on master: [`https://raw.githubusercontent.com/Dibasic/helpspot-style-userscript/master/script.js`](https://raw.githubusercontent.com/Dibasic/helpspot-style-userscript/master/script.js)
+4. In "Install from URL", enter the URL for the raw contents of script.js on master: [`http://hsus.ss13.net/script.js`](http://hsus.ss13.net/script.js)
 
 5. Click "Install" to confirm when prompted
 
