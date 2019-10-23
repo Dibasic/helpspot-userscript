@@ -92,4 +92,4 @@ Please feel free to submit pull requests.
 
 ## Licensing
 
-This script is provided without warranty and under the license specified in the LICENSE.md file. Please contact me directly if you are interested in my help with a custom implementation or need a specific relicense.
+This script is provided without warranty and under the license specified in the LICENSE file. Please contact me directly if you are interested in my help with a custom implementation or need a specific relicense.
