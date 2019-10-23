@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.12.11
+// @version      1.12.12
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -441,6 +441,10 @@
             }
             .note-stream-item-external > div.note-stream-item-inner-wrap {
                 border-right-color: ${COLOR.ext};
+            }
+            .note-stream-item-text {
+                max-height: 600px;
+                overflow-y: auto;
             }
             #request_history_body img {
                 max-width: 600px;
