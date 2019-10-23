@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.10.01
+// @version      1.12.11
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -41,7 +41,6 @@
     var storage = {};
 
     var COLOR;
-    var STATUS;
 
     function main() {
         readStorage();
@@ -49,7 +48,7 @@
         GM_log(`${GM_info.script.name} - ${GM_info.script.description}`
             + ` v. ${GM_info.script.version} (${new Date(GM_info.script.lastModified).toLocaleString()})`
             + ` © ${GM_info.script.author} (MIT)`
-            + ` To report an issue, please visit ${GM_info.script.supportURL}`
+            + ` To report an issue, please contact me or visit ${GM_info.script.supportURL}`
         );
         
         const url = document.URL;
@@ -62,7 +61,6 @@
 
         setColor();
         setCss();
-        setStatus();
 
         global();
 
@@ -148,29 +146,116 @@
         COLOR.ext         = COLOR.split2_l;   // #dddd97
     }
 
-    function setStatus() {
-        STATUS = {
-            'Active'                   : { text: null              , bg: COLOR.warning  , fg: null    , b: null   }
-          , 'Appointment Complete'     : { text: 'App Complete'    , bg: COLOR.resolved , fg: null    , b: null   }
-          , 'Appointment Scheduled'    : { text: 'App Scheduled'   , bg: COLOR.warning  , fg: null    , b: null   }
-          , 'Assessment'               : { text: null              , bg: COLOR.feature  , fg: null    , b: null   }
-          , 'Customer Found Solution'  : { text: 'Found Solution'  , bg: COLOR.resolved , fg: null    , b: null   }
-          , 'Customer Unreachable'     : { text: 'Unreachable'     , bg: COLOR.gray_m   , fg: COLOR.white , b: null   }
-          , 'Escalated'                : { text: null              , bg: COLOR.error    , fg: null    , b: 'bold' }
-          , 'Not Supported'            : { text: null              , bg: COLOR.waiting  , fg: null    , b: null   }
-          , 'Passed to Implementation' : { text: 'Implementation'  , bg: COLOR.waiting  , fg: null    , b: null   }
-          , 'Pending Client Feedback'  : { text: 'Feedback'        , bg: COLOR.resolved , fg: null    , b: null   }
-          , 'Pending Internal Info'    : { text: 'Internal Info'   , bg: COLOR.waiting  , fg: null    , b: null   }
-          , 'Problem Solved'           : { text: 'Solved'          , bg: COLOR.resolved , fg: null    , b: null   }
-          , 'Question Answered'        : { text: 'Answered'        , bg: COLOR.resolved , fg: null    , b: null   }
-          , 'Sales Request'            : { text: 'Sales'           , bg: COLOR.waiting  , fg: null    , b: null   }
-          , 'Stale'                    : { text: null              , bg: COLOR.waiting  , fg: null    , b: null   }
-          , 'Support Rep Working'      : { text: 'Working'         , bg: COLOR.warning  , fg: null    , b: null   }
-        };
-    }
+    var CLASS = {
+        error    : 'hsus-error'
+      , active   : 'hsus-warng'
+      , wait     : 'hsus-waitg'
+      , question : 'hsus-quest'
+      , solved   : 'hsus-reslv'
+      , stale    : 'hsus-stale'
+      , noaction : 'hsus-noact'
+    };
+
+    var STATUS = {
+        'Escalated'                : { text: 'Escalated'      , class: CLASS.error    }
+      , 'Active'                   : { text: 'Active'         , class: CLASS.active   }
+      , 'Appointment Scheduled'    : { text: 'App Scheduled'  , class: CLASS.active   }
+      , 'Appointment Complete'     : { text: 'App Complete'   , class: CLASS.solved   }
+      , 'Support Rep Working'      : { text: 'Working'        , class: CLASS.active   }
+      , 'Pending Internal Info'    : { text: 'Internal Info'  , class: CLASS.stale    }
+      , 'JALOT'                    : { text: 'JALOT'          , class: CLASS.wait     }
+      , 'JALOT - Deferred'         : { text: 'JALOT (D)'      , class: CLASS.stale    }
+      , 'Assessment'               : { text: 'Assessment'     , class: CLASS.wait     }
+      , 'SOW'                      : { text: 'SOW'            , class: CLASS.wait     }
+      , 'Problem Solved'           : { text: 'Solved'         , class: CLASS.solved   }
+      , 'Question Answered'        : { text: 'Answered'       , class: CLASS.solved   }
+      , 'Customer Found Solution'  : { text: 'Found Solution' , class: CLASS.solved   }
+      , 'Pending Client Feedback'  : { text: 'Feedback'       , class: CLASS.solved   }
+      , 'Stale'                    : { text: 'Stale'          , class: CLASS.stale    }
+      , 'Sales Request'            : { text: '-> Sales'       , class: CLASS.stale    }
+      , 'Passed to Implementation' : { text: '-> Implem'      , class: CLASS.stale    }
+      , 'CC Only'                  : { text: 'CC'             , class: CLASS.noaction }
+      , 'Customer Unreachable'     : { text: 'Unreachable'    , class: CLASS.noaction }
+      , 'Not Supported'            : { text: 'Not Supported'  , class: CLASS.stale    }
+    };
+
+    var CATEGORY = {
+        'CAT'                         : { text: 'CAT'       , class: CLASS.active   }
+      , 'CIM'                         : { text: 'CIM'       , class: CLASS.active   }
+      , 'CLSS'                        : { text: 'CLSS'      , class: CLASS.active   }
+      , 'PATH'                        : { text: 'PATH'      , class: CLASS.active   }
+      , 'SYLO'                        : { text: 'SYLO'      , class: CLASS.active   }
+      , 'CAT 1 - Public'              : { text: 'CAT 1'     , class: CLASS.error    }
+      , 'CIM 1 - No Access'           : { text: 'CIM 1'     , class: CLASS.error    }
+      , 'CLSS 1 - Public'             : { text: 'CLSS 1'    , class: CLASS.error    }
+      , 'PATH 1 - Public'             : { text: 'PATH 1'    , class: CLASS.error    }
+      , 'CAT 2 - Next'                : { text: 'CAT 2'     , class: CLASS.active   }
+      , 'CIM 2 - Next'                : { text: 'CIM 2'     , class: CLASS.active   }
+      , 'CLSS 2 - Next'               : { text: 'CLSS 2'    , class: CLASS.active   }
+      , 'PATH 2 - Next'               : { text: 'PATH 2'    , class: CLASS.active   }
+      , 'CAT 3 - Client Requirement'  : { text: 'CAT 3'     , class: CLASS.wait     }
+      , 'CIM 3 - Client Requirement'  : { text: 'CIM 3'     , class: CLASS.wait     }
+      , 'CLSS 3 - Client Requirement' : { text: 'CLSS 3'    , class: CLASS.wait     }
+      , 'PATH 3 - Client Requirement' : { text: 'PATH 3'    , class: CLASS.wait     }
+      , 'CAT SOW'                     : { text: 'CAT SOW'   , class: CLASS.wait     }
+      , 'CIM SOW'                     : { text: 'CIM SOW'   , class: CLASS.wait     }
+      , 'CLSS SOW'                    : { text: 'CLSS SOW'  , class: CLASS.wait     }
+      , 'PATH SOW'                    : { text: 'PATH SOW'  , class: CLASS.wait     }
+      , 'CAT 4 - Repair'              : { text: 'CAT 4'     , class: CLASS.wait     }
+      , 'CIM 4 - Repair'              : { text: 'CIM 4'     , class: CLASS.wait     }
+      , 'CLSS 4 - Repair'             : { text: 'CLSS 4'    , class: CLASS.wait     }
+      , 'CAT Client Questions Only'   : { text: 'CAT Q'     , class: CLASS.solved   }
+      , 'CIM Client Questions Only'   : { text: 'CIM Q'     , class: CLASS.solved   }
+      , 'CLSS Client Questions Only'  : { text: 'CLSS Q'    , class: CLASS.solved   }
+      , 'PATH Client Question Only'   : { text: 'PATH Q'    , class: CLASS.solved   }
+      , 'CAT Milestones'              : { text: 'CAT Mile'  , class: CLASS.active   }
+      , 'CSR/SSL'                     : { text: 'CSR/SSL'   , class: CLASS.active   }
+      , 'Implementation'              : { text: '-> Implem' , class: CLASS.wait     }
+      , 'Training'                    : { text: '-> Train'  , class: CLASS.wait     }
+      , 'Sales'                       : { text: '-> Sales'  , class: CLASS.wait     }
+      , 'User Community'              : { text: 'User Comm' , class: CLASS.wait     }
+      , 'daily.sh warnings'           : { text: 'daily.sh'  , class: CLASS.noaction }
+      , 'Other (Admin Use Only)'      : { text: 'Other'     , class: CLASS.noaction }
+    };
 
     function setCss() {
         GM_addStyle(`
+            .${CLASS.error} {
+                background-color: ${COLOR.error};
+                color: ${COLOR.white};
+                font-weight: bold;
+            }
+            .${CLASS.active} {
+                background-color: ${COLOR.warning};
+            }
+            .${CLASS.wait} {
+                background-color: ${COLOR.feature};
+            }
+            .${CLASS.question} {
+                background-color: ${COLOR.question};
+            }
+            .${CLASS.solved} {
+                background-color: ${COLOR.resolved};
+            }
+            .${CLASS.stale} {
+                background-color: ${COLOR.waiting};
+            }
+            .${CLASS.noaction} {
+                background-color: ${COLOR.gray_m};
+            }
+
+            .hsus-category {
+                width: 80px;
+            }
+            .hsus-status {
+                width: 140px;
+                cursor: pointer;
+            }
+            .hsus-status-custom {
+                text-decoration: underline;
+                text-decoration-style: dotted;
+            }
+
             td[id^="1_table_header_"] a {
                 text-decoration: none;
             }
@@ -179,6 +264,27 @@
                 font-family: "Consolas", monospace;
                 font-size: 14px;
                 white-space: nowrap;
+            }
+
+            .hssu-c-s1 {
+                background-color: ${COLOR.error};
+                color: ${COLOR.white};
+                font-weight: bold;
+            }
+            .hssu-c-s2 {
+                background-color: ${COLOR.warning};
+            }
+            .hssu-c-s3 {
+                background-color: ${COLOR.feature};
+            }
+            .hssu-c-cq {
+                background-color: ${COLOR.question};
+            }
+            .hssu-c-pr {
+                background-color: ${COLOR.warning};
+            }
+            .hssu-c-wt {
+                background-color: ${COLOR.waiting};
             }
 
             .request-sub-note-box > button {
@@ -588,56 +694,68 @@
             return {header: thead, cells: result};
         }
 
+        /* Performance is VERY IMPORTANT for the category/status transform and styling.
+         * This is the largest visual change and it interrupts redraw.
+         * 1.12 : about 
+        */
         intervalFunctions.category = function() {
 
             let timestart = new Date().getTime();
 
-            const pattern = /^(?:([A-Z]{2,})(?=$| (\d)| Client (Q)| (SOW)| (Mile))|(Impl|Other|Sales|daily\.sh|User Com)).*/
-            , sub = '$1$6 $2$3$4$5';
-
-            const product = /^[A-Z]{2,4}$/;
-
             function styleCategoryCell(e) {
-                e.title = e.innerText;
-                const result = e.innerText.replace(pattern, sub);
-                e.innerText = result;
-
-                if (e.innerText.endsWith(' 1')) {
-                    e.style['background-color'] = COLOR.error;
-                    e.style['color'] = COLOR.white;
-                    e.style['font-weight'] = 'bold';
-                }
-                else if (e.innerText.endsWith(' 2')
-                    || e.innerText.endsWith(' Mile')
-                    || e.innerText === 'CSR/SSL') {
-                    e.style['background-color'] = COLOR.warning;
-                }
-                else if (e.innerText.endsWith(' 3')
-                    || e.innerText.endsWith(' 4')
-                    || e.innerText.endsWith(' SOW')) {
-                    e.style['background-color'] = COLOR.feature;
-                }
-                else if (e.innerText.endsWith(' Q')) {
-                    e.style['background-color'] = COLOR.question;
-                }
-                else if (e.innerText.match(product)
-                    || e.innerText === '-') {
-                    e.style['background-color'] = COLOR.warning;
-                }
-                else if (e.innerText === 'Implementation'
-                    || e.innerText === 'Sales'
-                    || e.innerText === 'Training') {
-                    e.style['background-color'] = COLOR.waiting;
+                let category = CATEGORY[e.innerText];
+                if (category) {
+                    e.innerText = category.text;
+                    e.className = 'tcell hsus-category ' + category.class;
                 }
             }
 
-            function _styleCategoryCell(e) {
-                setTimeout((() => styleCategoryCell(e)), 0);
-            }
+            let result = Array.from(getColumnById('1_table_header_sCategory').cells);
 
-            let result = getColumnById('1_table_header_sCategory').cells;
-            // experiment with letting the stack finish before each call
-            result.forEach(_styleCategoryCell);
+            // experiment with slicing in 4 parts for better visual performance
+            const s0 = Math.floor(result.length / 8), s1 = Math.floor(result.length / 4), s2 = Math.floor(result.length / 2);
+            setTimeout(() => result.slice(0,s0).forEach(styleCategoryCell), 0);
+            setTimeout(() => result.slice(s0,s1).forEach(styleCategoryCell), 10);
+            setTimeout(() => result.slice(s1,s2).forEach(styleCategoryCell), 25);
+            setTimeout(() => result.slice(s1,result.length).forEach(styleCategoryCell), 50);
+
+            let duration = new Date().getTime() - timestart;
+
+            return [result.length, duration];
+        };
+        intervalFunctions.status = function() {
+
+            let timestart = new Date().getTime();
+
+            function styleStatusCell(e) {
+                let status = STATUS[e.innerText];
+                if (status) {
+                    e.className = 'tcell hsus-status ' + status.class;
+                    let custom = getCustomStatus(getId(e));
+                    if (custom) {
+                        e.className += ' hsus-status-custom';
+                        e.title = custom;
+                        if (custom.length > 14) {
+                            e.innerText = custom.substring(0,12) + '...';
+                        }
+                        else {
+                            e.innerText = custom;
+                        }
+                    }
+                    else {
+                        e.innerText = status.text;
+                    }
+                }
+            }
+            let result = Array.from(getColumnById('1_table_header_sStatus').cells);
+
+            // experiment with slicing in 4 parts for better visual performance
+            // hopefully but not critically, stagger status and category changes
+            const s0 = Math.floor(result.length / 8), s1 = Math.floor(result.length / 4), s2 = Math.floor(result.length / 2);
+            setTimeout(() => result.slice(0,s0).forEach(styleStatusCell), 0);
+            setTimeout(() => result.slice(s0,s1).forEach(styleStatusCell), 10);
+            setTimeout(() => result.slice(s1,s2).forEach(styleStatusCell), 25);
+            setTimeout(() => result.slice(s1,result.length).forEach(styleStatusCell), 50);
 
             let duration = new Date().getTime() - timestart;
 
@@ -707,97 +825,13 @@
 
             return [result.length, duration];
         };
-        intervalFunctions.status = function() {
-
-            let timestart = new Date().getTime();
-
-            function styleStatusCell(e) {
-                if (!e.title) {
-                    let status = getCustomStatus(getId(e));
-                    if (status) {
-                        e.title = status;
-                        styleElement(e, 'text-decoration: underline; text-decoration-style: dotted');
-                    }
-                    else {
-                        e.title = e.innerText;
-                    }
-                }
-
-                const newStatus = STATUS[e.innerText];
-                if (newStatus) {
-                    if (newStatus.text) {
-                        e.innerText = newStatus.text;
-                    }
-                    if (newStatus.bg) {
-                        e.style['background-color'] = newStatus.bg;
-                    }
-                    if (newStatus.fg) {
-                        e.style['color'] = newStatus.fg;
-                    }
-                    if (newStatus.b) {
-                        e.style['font-weight'] = newStatus.b;
-                    }
-                }
-
-                if (e.innerText === 'Escalated') {
-                    e.style['background-color'] = COLOR.error;
-                    e.style['color'] = COLOR.white;
-                    e.style['font-weight'] = 'bold';
-                }
-                else if (e.innerText === 'Active'
-                    || e.innerText === 'App Scheduled'
-                    || e.innerText === 'Working') {
-                    e.style['background-color'] = COLOR.warning;
-                    e.style['font-weight'] = 'bold';
-                }
-                else if (e.innerText.startsWith('JAL')
-                    || e.innerText === 'Internal Info'
-                    || e.innerText === 'Assessment'
-                    || e.innerText === 'SOW') {
-                    e.style['background-color'] = COLOR.feature;
-                }
-                else if (e.innerText === 'Client Feedback'
-                    || e.innerText === 'Found Solution'
-                    || e.innerText === 'App Complete'
-                    || e.innerText === 'Answered'
-                    || e.innerText === 'Solved') {
-                    e.style['background-color'] = COLOR.resolved;
-                }
-                else if (e.innerText === 'Stale'
-                    || e.innerText === 'Implementation'
-                    || e.innerText === 'Sales'
-                    || e.innerText === 'Not Supported') {
-                    e.style['background-color'] = COLOR.waiting;
-                }
-                else if (e.innerText.endsWith(' Only')
-                    || e.innerText.endsWith(' Logs')
-                    || e.innerText === 'OOTO Only'
-                    || e.innerText === 'Unreachable'
-                    || e.innerText === 'SPAM') {
-                    e.style['background-color'] = COLOR.gray_m;
-                }
-
-                styleElement(e, 'cursor: pointer');
-            }
-
-            function _styleStatusCell(e) {
-                setTimeout((() => styleStatusCell(e)), 0);
-            }
-
-            let result = getColumnById('1_table_header_sStatus').cells;
-            result.forEach(_styleStatusCell);
-
-            let duration = new Date().getTime() - timestart;
-
-            return [result.length, duration];
-        };
         intervalFunctions.statusnotes = function() {
 
             let timestart = new Date().getTime();
 
             function addStatusEvent(e) {
                 e.addEventListener('click', function() {
-                    let customStatus = prompt('Custom status to show');
+                    let customStatus = prompt('Custom status to show', getCustomStatus(getId(e)));
                     if (customStatus) {
                         setCustomStatus(getId(e), customStatus);
                         e.title = customStatus;
@@ -1109,7 +1143,7 @@
     function runIntervalFunctions() {
         let starttime = new Date().getTime();
         let count = 0;
-        Object.keys(intervalFunctions).forEach(function(fn) {
+        Object.keys(intervalFunctions).forEach(fn => setTimeout(function() {
             let result = intervalFunctions[fn].call();
             let incr = '?';
             if (result && result[0]) {
@@ -1117,7 +1151,7 @@
                 count += incr;
             }
             GM_log(`> > ${fn} updated ${incr} elements in ${result && result[1] ? result[1] : '?'}ms`);
-        });
+        }), 0);
         let duration = new Date().getTime() - starttime;
         GM_log(`> intervalFunctions updated at least ${count} elements in ${duration}ms`);
     }
