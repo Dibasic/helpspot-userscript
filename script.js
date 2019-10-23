@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.12.12
+// @version      1.12.13
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -162,7 +162,7 @@
       , 'Appointment Scheduled'    : { text: 'App Scheduled'  , class: CLASS.active   }
       , 'Appointment Complete'     : { text: 'App Complete'   , class: CLASS.solved   }
       , 'Support Rep Working'      : { text: 'Working'        , class: CLASS.active   }
-      , 'Pending Internal Info'    : { text: 'Internal Info'  , class: CLASS.stale    }
+      , 'Pending Internal Info'    : { text: 'Internal Info'  , class: CLASS.wait     }
       , 'JALOT'                    : { text: 'JALOT'          , class: CLASS.wait     }
       , 'JALOT - Deferred'         : { text: 'JALOT (D)'      , class: CLASS.stale    }
       , 'Assessment'               : { text: 'Assessment'     , class: CLASS.wait     }
@@ -172,8 +172,8 @@
       , 'Customer Found Solution'  : { text: 'Found Solution' , class: CLASS.solved   }
       , 'Pending Client Feedback'  : { text: 'Feedback'       , class: CLASS.solved   }
       , 'Stale'                    : { text: 'Stale'          , class: CLASS.stale    }
-      , 'Sales Request'            : { text: '-> Sales'       , class: CLASS.stale    }
-      , 'Passed to Implementation' : { text: '-> Implem'      , class: CLASS.stale    }
+      , 'Sales Request'            : { text: '-> Sales'       , class: CLASS.wait     }
+      , 'Passed to Implementation' : { text: '-> Implem'      , class: CLASS.wait     }
       , 'CC Only'                  : { text: 'CC'             , class: CLASS.noaction }
       , 'Customer Unreachable'     : { text: 'Unreachable'    , class: CLASS.noaction }
       , 'Not Supported'            : { text: 'Not Supported'  , class: CLASS.stale    }
