@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.13.20
+// @version      1.14.05
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -21,10 +21,7 @@
 
 // LINTING
 /* jshint esnext: true, laxcomma: true, laxbreak: true, -W069 */
-/* globals $, prompt, GM_addStyle, GM_getValue, GM_info, GM_log, GM_setClipboard, GM_setValue, changeNote */
-/* unused globals:
- * hs_quote_public
- */
+/* globals $, prompt, GM_addStyle, GM_getValue, GM_info, GM_log, GM_setClipboard, GM_setValue, hs_quote_public, changeNote */
 
 (function() {
     'use strict';
@@ -473,7 +470,12 @@
         return rules;
     }
 
-    function quotePublicHistory() {
+    function cleanQuotedText() {
+        $('iframe.ephox-hare-content-iframe').first().contents().find('body > blockquote > blockquote').remove();
+        $('iframe.ephox-hare-content-iframe').first().contents().find('body').html($('iframe.ephox-hare-content-iframe').first().contents().find('body').html().replace(/(<p>\s*<br>\s*<\/p>\s*)+/g,'$1'));
+    }
+
+    function quotePublicHistory(all) {
 
         const xRequestHistoryRegex = /^[^-]+-(\d+)$/;
         const xRequestHistorySubst = '$1';
@@ -483,42 +485,49 @@
 
         let actions = [];
 
-        while (count < QUOTE_LENGTH) {
-            let item = $('div.note-stream-item:not(.note-stream-item-external)').get(count + offset);
-            if (item) {
-                item = $(item);
-                const xRequestHistory = item.attr('id');
-                const id = xRequestHistory.replace(xRequestHistoryRegex, xRequestHistorySubst);
-                const quote = $(`a[onclick^="hs_quote(${id},"]`);
-                if (item.is('.note-stream-item-private')) {
-                    const makePublic = $(`a[href$="${id}&makepublic=1"]`);
-                    const headers = $(`#${xRequestHistory} .note-stream-header-item`);
-                    if (headers.length > 1) { // this is an email from a CCed person, not a private note
-                        if (makePublic.length == 1) {
-                            makePublic.click();
+        if (all) {
+            //with this quoting method, longer requests can end up using an INSANE (>1GB) amount of memory for the editor iframe for some reason:
+            actions.push(() => hs_quote_public(document.getElementById('reqid').value, 'tBody'));
+            //really just meant for external
+        }
+        else {
+            while (count < QUOTE_LENGTH) {
+                let item = $('div.note-stream-item:not(.note-stream-item-external)').get(count + offset);
+                if (item) {
+                    item = $(item);
+                    const xRequestHistory = item.attr('id');
+                    const id = xRequestHistory.replace(xRequestHistoryRegex, xRequestHistorySubst);
+                    const quote = $(`a[onclick^="hs_quote(${id},"]`);
+                    if (item.is('.note-stream-item-private')) {
+                        const makePublic = $(`a[href$="${id}&makepublic=1"]`);
+                        const headers = $(`#${xRequestHistory} .note-stream-header-item`);
+                        if (headers.length > 1) { // this is an email from a CCed person, not a private note
+                            if (makePublic.length == 1) {
+                                makePublic.click();
+                            }
+                            else {
+                                GM_log(`Tried to make ${id} public but found ${makePublic.length} matching items.`);
+                            }
                         }
-                        else {
-                            GM_log(`Tried to make ${id} public but found ${makePublic.length} matching items.`);
+                        else { // this is a private note by staff, skip it
+                            offset++;
+                            continue;
                         }
                     }
-                    else { // this is a private note by staff, skip it
-                        offset++;
-                        continue;
+                    if (quote.length == 1) {
+                        actions.push(quote[0].onclick);
                     }
-                }
-                if (quote.length == 1) {
-                    actions.push(quote[0].onclick);
+                    else {
+                        GM_log(`Tried to quote ${id} but found ${quote.length} matching items.`);
+                    }
+                    count++;      
                 }
                 else {
-                    GM_log(`Tried to quote ${id} but found ${quote.length} matching items.`);
+                    break;
                 }
-                count++;      
-            }
-            else {
-                break;
             }
         }
-
+        
         function callAction() {
             const shift = actions.shift();
             if (shift) {
@@ -526,17 +535,11 @@
                 setTimeout(callAction, 100);
             }
             else {
-                setTimeout(function() {
-                    $('iframe.ephox-hare-content-iframe').first().contents().find('body > blockquote > blockquote').remove();
-                    $('iframe.ephox-hare-content-iframe').first().contents().find('body').html($('iframe.ephox-hare-content-iframe').first().contents().find('body').html().replace(/(<p>\s*<br>\s*<\/p>\s*)+/g,'$1'));
-
-                }, 100);
+                setTimeout(cleanQuotedText, 100);
             }
         }
-        callAction();
 
-        //with this quoting method, longer requests end up using an INSANE (>1GB) amount of memory for the editor iframe for some reason:
-        //hs_quote_public(document.getElementById('reqid').value, 'tBody');
+        callAction();
     }
 
     function styleApply(element, rules) {
@@ -1139,7 +1142,9 @@
             let lblClass = 'class="hsus-wysiwyg-lbl"';
             let newButtons = '<div id="hsus-wysiwyg">';
             newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hsus-clear"><i class="fad fa-trash"></i></span><span ${lblClass}>Clear</span></span>`;
-            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hsus-quote"><i class="fad fa-quote-right"></i></span><span ${lblClass}>Quote</span></span>`;
+            newButtons += `<span ${btnClass} title="Quote Last ${QUOTE_LENGTH} Notes"><span ${icoClass} id="hsus-quote"><i class="fad fa-quote-right"></i></span><span ${lblClass}>Quote</span></span>`;
+            newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hsus-quote-all"><i class="fad fa-scroll"></i></span><span ${lblClass}>Quote All</span></span>`;
+            newButtons += `<span ${btnClass} title="Clean Quoted Text"><span ${icoClass} id="hsus-clean"><i class="fad fa-recycle"></i></span><span ${lblClass}>Clean</span></span>`;
             newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hsus-attach"><i class="fad fa-paperclip"></i></span><span ${lblClass}>Attach</span></span>`;
             newButtons += `<span ${btnClass} title="Save Draft"><span ${icoClass} id="hsus-save"><i class="fad fa-save"></i></span><span ${lblClass}>Save</span></span>`;
             newButtons += `<span ${btnClass} title="Restore Draft" onclick="draft_options_box();return false;"><span ${icoClass} id="hsus-restore"><i class="fad fa-trash-undo"></i></span><span ${lblClass}>Restore</span></span>`;
@@ -1175,6 +1180,10 @@
             $('#hsus-quote').click(function() {
                 quotePublicHistory();
             });
+            $('#hsus-quote-all').click(function() {
+                quotePublicHistory(true);
+            });
+            $('#hsus-clean').click(cleanQuotedText);
             $('#hsus-save').click(function() {
                 $('span.ephox-pastry-button[title^="Save"]').click();
             });
