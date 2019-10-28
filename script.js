@@ -378,7 +378,7 @@
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
-                height: 36px;
+                min-height: 36px;
                 background-color: ${COLOR.gray_l};
             }
 
