@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.13.18
+// @version      1.13.19
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -524,6 +524,9 @@
             if (shift) {
                 shift.call();
                 setTimeout(callAction, 100);
+            }
+            else {
+                setTimeout(() => $('iframe.ephox-hare-content-iframe').first().contents().find('body > blockquote > blockquote').remove(), 100);
             }
         }
         callAction();
