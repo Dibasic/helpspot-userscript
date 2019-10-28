@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.13.17
+// @version      1.13.18
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -485,33 +485,38 @@
 
         while (count < QUOTE_LENGTH) {
             let item = $('div.note-stream-item:not(.note-stream-item-external)').get(count + offset);
-            item = $(item);
-            const xRequestHistory = item.attr('id');
-            const id = xRequestHistory.replace(xRequestHistoryRegex, xRequestHistorySubst);
-            const quote = $(`a[onclick^="hs_quote(${id},"]`);
-            if (item.is('.note-stream-item-private')) {
-                const makePublic = $(`a[href$="${id}&makepublic=1"]`);
-                const headers = $(`#${xRequestHistory} .note-stream-header-item`);
-                if (headers.length > 1) { // this is an email from a CCed person, not a private note
-                    if (makePublic.length == 1) {
-                        makePublic.click();
+            if (item) {
+                item = $(item);
+                const xRequestHistory = item.attr('id');
+                const id = xRequestHistory.replace(xRequestHistoryRegex, xRequestHistorySubst);
+                const quote = $(`a[onclick^="hs_quote(${id},"]`);
+                if (item.is('.note-stream-item-private')) {
+                    const makePublic = $(`a[href$="${id}&makepublic=1"]`);
+                    const headers = $(`#${xRequestHistory} .note-stream-header-item`);
+                    if (headers.length > 1) { // this is an email from a CCed person, not a private note
+                        if (makePublic.length == 1) {
+                            makePublic.click();
+                        }
+                        else {
+                            GM_log(`Tried to make ${id} public but found ${makePublic.length} matching items.`);
+                        }
                     }
-                    else {
-                        GM_log(`Tried to make ${id} public but found ${makePublic.length} matching items.`);
+                    else { // this is a private note by staff, skip it
+                        offset++;
+                        continue;
                     }
                 }
-                else { // this is a private note by staff, skip it
-                    offset++;
-                    continue;
+                if (quote.length == 1) {
+                    actions.push(quote[0].onclick);
                 }
-            }
-            if (quote.length == 1) {
-                actions.push(quote[0].onclick);
+                else {
+                    GM_log(`Tried to quote ${id} but found ${quote.length} matching items.`);
+                }
+                count++;      
             }
             else {
-                GM_log(`Tried to quote ${id} but found ${quote.length} matching items.`);
+                break;
             }
-            count++;
         }
 
         function callAction() {
