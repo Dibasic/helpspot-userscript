@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.14.05
+// @version      1.14.06
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -387,7 +387,7 @@
             }
 
             #hsus-wysiwyg span, #hsus-wysiwyg button {
-                height: 100%;
+                height: 36px;
                 cursor: pointer;
             }
             #hsus-wysiwyg > span, #hsus-wysiwyg > button, #hsus-wysiwyg div:not(:first-child):not(.hsus-wysiwyg-lbl) {
@@ -1142,7 +1142,7 @@
             let lblClass = 'class="hsus-wysiwyg-lbl"';
             let newButtons = '<div id="hsus-wysiwyg">';
             newButtons += `<span ${btnClass} title="Save and Clear Editor"><span ${icoClass} id="hsus-clear"><i class="fad fa-trash"></i></span><span ${lblClass}>Clear</span></span>`;
-            newButtons += `<span ${btnClass} title="Quote Last ${QUOTE_LENGTH} Notes"><span ${icoClass} id="hsus-quote"><i class="fad fa-quote-right"></i></span><span ${lblClass}>Quote</span></span>`;
+            newButtons += `<span ${btnClass} title="Quote Last ${QUOTE_LENGTH} Notes"><span ${icoClass} id="hsus-quote"><i class="fad fa-quote-right"></i></span><span ${lblClass}>Quote ${QUOTE_LENGTH}</span></span>`;
             newButtons += `<span ${btnClass} title="Quote All Public Notes"><span ${icoClass} id="hsus-quote-all"><i class="fad fa-scroll"></i></span><span ${lblClass}>Quote All</span></span>`;
             newButtons += `<span ${btnClass} title="Clean Quoted Text"><span ${icoClass} id="hsus-clean"><i class="fad fa-recycle"></i></span><span ${lblClass}>Clean</span></span>`;
             newButtons += `<span ${btnClass} title="Attach File" onclick="addAnotherFile();return false;"><span ${icoClass} id="hsus-attach"><i class="fad fa-paperclip"></i></span><span ${lblClass}>Attach</span></span>`;
