@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.12.12
+// @version      1.13.17
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -20,8 +20,11 @@
 // SPDX-License-Identifier: MIT
 
 // LINTING
-/* jshint devel: true, esnext: true, laxcomma: true, laxbreak: true, -W069 */
-/* globals $, GM_addStyle, GM_getValue, GM_info, GM_log, GM_setClipboard, GM_setValue, hs_quote_public, changeNote */
+/* jshint esnext: true, laxcomma: true, laxbreak: true, -W069 */
+/* globals $, prompt, GM_addStyle, GM_getValue, GM_info, GM_log, GM_setClipboard, GM_setValue, changeNote */
+/* unused globals:
+ * hs_quote_public
+ */
 
 (function() {
     'use strict';
@@ -31,9 +34,14 @@
      * the key is how they will be referenced in this script file
      * the value is how they will be referenced in Tampermonkey
      */
-    var STORAGE_KEYS = {
+    const STORAGE_KEYS = {
         'requests' : 'requests'
     };
+
+    /* QUOTE LENGTH
+     * sets the maximum number of replies that will be automatically quoted
+     */
+    const QUOTE_LENGTH = 3;
 
     var intervalFunctions = {};
     var oneTimeFunctions = {};
@@ -52,7 +60,7 @@
         );
         
         const url = document.URL;
-        const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=([^&]*)(?:&(?:show|reqid)=(\w+))?/;
+        const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(workspace|request)(?:&fb=\d+)?(?:&(?:show|reqid)=(\w+))?/;
         const match = url.match(pattern);
 
         let pg = match[1] || 'err';
@@ -146,7 +154,7 @@
         COLOR.ext         = COLOR.split2_l;   // #dddd97
     }
 
-    var CLASS = {
+    const CLASS = {
         error    : 'hsus-error'
       , active   : 'hsus-warng'
       , wait     : 'hsus-waitg'
@@ -156,7 +164,7 @@
       , noaction : 'hsus-noact'
     };
 
-    var STATUS = {
+    const STATUS = {
         'Escalated'                : { text: 'Escalated'      , class: CLASS.error    }
       , 'Active'                   : { text: 'Active'         , class: CLASS.active   }
       , 'Appointment Scheduled'    : { text: 'App Scheduled'  , class: CLASS.active   }
@@ -179,7 +187,7 @@
       , 'Not Supported'            : { text: 'Not Supported'  , class: CLASS.stale    }
     };
 
-    var CATEGORY = {
+    const CATEGORY = {
         'CAT'                         : { text: 'CAT'       , class: CLASS.active   }
       , 'CIM'                         : { text: 'CIM'       , class: CLASS.active   }
       , 'CLSS'                        : { text: 'CLSS'      , class: CLASS.active   }
@@ -466,7 +474,57 @@
     }
 
     function quotePublicHistory() {
-        hs_quote_public(document.getElementById('reqid').value, 'tBody');
+
+        const xRequestHistoryRegex = /^[^-]+-(\d+)$/;
+        const xRequestHistorySubst = '$1';
+
+        let count = 0;
+        let offset = 0;
+
+        let actions = [];
+
+        while (count < QUOTE_LENGTH) {
+            let item = $('div.note-stream-item:not(.note-stream-item-external)').get(count + offset);
+            item = $(item);
+            const xRequestHistory = item.attr('id');
+            const id = xRequestHistory.replace(xRequestHistoryRegex, xRequestHistorySubst);
+            const quote = $(`a[onclick^="hs_quote(${id},"]`);
+            if (item.is('.note-stream-item-private')) {
+                const makePublic = $(`a[href$="${id}&makepublic=1"]`);
+                const headers = $(`#${xRequestHistory} .note-stream-header-item`);
+                if (headers.length > 1) { // this is an email from a CCed person, not a private note
+                    if (makePublic.length == 1) {
+                        makePublic.click();
+                    }
+                    else {
+                        GM_log(`Tried to make ${id} public but found ${makePublic.length} matching items.`);
+                    }
+                }
+                else { // this is a private note by staff, skip it
+                    offset++;
+                    continue;
+                }
+            }
+            if (quote.length == 1) {
+                actions.push(quote[0].onclick);
+            }
+            else {
+                GM_log(`Tried to quote ${id} but found ${quote.length} matching items.`);
+            }
+            count++;
+        }
+
+        function callAction() {
+            const shift = actions.shift();
+            if (shift) {
+                shift.call();
+                setTimeout(callAction, 100);
+            }
+        }
+        callAction();
+
+        //with this quoting method, longer requests end up using an INSANE (>1GB) amount of memory for the editor iframe for some reason:
+        //hs_quote_public(document.getElementById('reqid').value, 'tBody');
     }
 
     function styleApply(element, rules) {
