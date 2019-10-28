@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.13.19
+// @version      1.13.20
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -526,7 +526,11 @@
                 setTimeout(callAction, 100);
             }
             else {
-                setTimeout(() => $('iframe.ephox-hare-content-iframe').first().contents().find('body > blockquote > blockquote').remove(), 100);
+                setTimeout(function() {
+                    $('iframe.ephox-hare-content-iframe').first().contents().find('body > blockquote > blockquote').remove();
+                    $('iframe.ephox-hare-content-iframe').first().contents().find('body').html($('iframe.ephox-hare-content-iframe').first().contents().find('body').html().replace(/(<p>\s*<br>\s*<\/p>\s*)+/g,'$1'));
+
+                }, 100);
             }
         }
         callAction();
