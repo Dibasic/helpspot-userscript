@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.14.06
+// @version      1.14.07
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -470,9 +470,12 @@
         return rules;
     }
 
-    function cleanQuotedText() {
+    function cleanBody() {
         $('iframe.ephox-hare-content-iframe').first().contents().find('body > blockquote > blockquote').remove();
-        $('iframe.ephox-hare-content-iframe').first().contents().find('body').html($('iframe.ephox-hare-content-iframe').first().contents().find('body').html().replace(/(<p>\s*<br>\s*<\/p>\s*)+/g,'$1'));
+        $('iframe.ephox-hare-content-iframe').first().contents().find('body').html($('iframe.ephox-hare-content-iframe').first().contents().find('body').html()
+            .replace(/(<p>\s*<br>\s*<\/p>\s*)+/g,'$1')
+            .replace(/<blockquote[^>]*>\s*<hr[^>]*>\s*<\/blockquote>/g,'')
+        );
     }
 
     function quotePublicHistory(all) {
@@ -535,7 +538,7 @@
                 setTimeout(callAction, 100);
             }
             else {
-                setTimeout(cleanQuotedText, 100);
+                setTimeout(cleanBody, 100);
             }
         }
 
@@ -1183,7 +1186,7 @@
             $('#hsus-quote-all').click(function() {
                 quotePublicHistory(true);
             });
-            $('#hsus-clean').click(cleanQuotedText);
+            $('#hsus-clean').click(cleanBody);
             $('#hsus-save').click(function() {
                 $('span.ephox-pastry-button[title^="Save"]').click();
             });
