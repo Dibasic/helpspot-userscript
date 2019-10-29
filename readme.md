@@ -45,7 +45,7 @@ Once installed, the script should automatically update itself when a new version
 
 3. Navigate to the Utilities tab
 
-4. In "Install from URL", enter the URL for the raw contents of script.js on master: [`http://hsus.ss13.net/script.js`](http://hsus.ss13.net/script.js)
+4. In "Install from URL", enter the URL for the raw contents of script.js on master: [`http://hsus.ss13.net/script.min.js`](http://hsus.ss13.net/script.min.js)
 
 5. Click "Install" to confirm when prompted
 
@@ -86,7 +86,9 @@ The script was made to work with my own custom filters. Contact me if you're my 
 
 ## Customization
 
-I've made the script modular enough to add features easily if you know some JavaScript. The script first identifies whether the page is a "workspace" (e.g. the main inbox or your queue) or a "request" (e.g. an individual ticket), assembles a list of functions for each, and then runs each in series. When it detects the automatic refresh popup, it runs the functions again. To add a new feature, implement it as a function in that list. To change this for 
+I've made the script modular enough to add features easily if you know some JavaScript. The script first identifies whether the page is a "workspace" (e.g. the main inbox or your queue) or a "request" (e.g. an individual ticket), assembles a list of single-use and interval (to redraw after a HelpSpot update) functions for each, and then runs each in series. When it detects the automatic refresh, it runs the interval functions again.
+
+To add a new feature, implement it as a function in either list.
 
 Please feel free to submit pull requests.
 
