@@ -1,4 +1,6 @@
 language: node_js
+before_install:
+  - chmod +x minify.sh
 script: ./minify.sh
 deploy:
   provider: pages
