@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.14.07
+// @version      1.15.07
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
-// @include      /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
+// @include      /^.*?helpspot.*?\/admin\.php\?pg=(?:workspace(?:&filter=created=[^&]+)?(?:&show=([^&]+))?(?:&fb=[^&]+)?|request(?:\.static)?(?:&fb=([^&]+))?(?:&reqid=([^&]+)))?/
 // @grant        GM_addStyle
 // @grant        GM_info
 // @grant        GM_getValue
@@ -21,7 +21,7 @@
 
 // LINTING
 /* jshint esnext: true, laxcomma: true, laxbreak: true, -W069 */
-/* globals $, prompt, GM_addStyle, GM_getValue, GM_info, GM_log, GM_setClipboard, GM_setValue, hs_quote_public, changeNote */
+/* globals $, prompt, GM_addStyle, GM_getValue, GM_info, GM_log, GM_setClipboard, GM_setValue, access_key_box, hs_quote_public, changeNote */
 
 (function() {
     'use strict';
@@ -57,7 +57,7 @@
         );
         
         const url = document.URL;
-        const pattern = /^https?:\/\/helpspot\.courseleaf\.com\/admin\.php\?pg=(workspace|request)(?:&fb=\d+)?(?:&(?:show|reqid)=(\w+))?/;
+        const pattern = /\/admin\.php\?pg=(workspace|request)(?:&fb=\d+)?(?:&(?:show|reqid)=(\w+))?/;
         const match = url.match(pattern);
 
         let pg = match[1] || 'err';
@@ -271,25 +271,47 @@
                 white-space: nowrap;
             }
 
-            .hssu-c-s1 {
+            .hsus-c-s1 {
                 background-color: ${COLOR.error};
                 color: ${COLOR.white};
                 font-weight: bold;
             }
-            .hssu-c-s2 {
+            .hsus-c-s2 {
                 background-color: ${COLOR.warning};
             }
-            .hssu-c-s3 {
+            .hsus-c-s3 {
                 background-color: ${COLOR.feature};
             }
-            .hssu-c-cq {
+            .hsus-c-cq {
                 background-color: ${COLOR.question};
             }
-            .hssu-c-pr {
+            .hsus-c-pr {
                 background-color: ${COLOR.warning};
             }
-            .hssu-c-wt {
+            .hsus-c-wt {
                 background-color: ${COLOR.waiting};
+            }
+
+            #hsus-lookup {
+                display: inline-block;
+                width: 26px;
+                text-align: center;
+                background-color: ${COLOR.gray_l};
+                cursor: pointer;
+                margin: 3px 0px 0px 10px;
+                position: relative;
+                top: 3px;
+            }
+            #hsus-lookup i {
+                line-height: 26px;
+                font-size: 18px;
+            }
+            #hsus-lookup:hover {
+                background-color: ${COLOR.base_l};
+                color: white;
+            }
+            #sUserId {
+                width: 80% !important;
             }
 
             .request-sub-note-box > button {
@@ -603,7 +625,6 @@
         let attempts = 0;
         function attempt() {
             setTimeout(function() {
-                GM_log(`- - - - Attempting ${condition.name} to run ${onSuccess.name} (attempt ${attempts + 1} of ${maxAttempts})...`);
                 if (condition()) {
                     GM_log(`- - - - - Success: ${onSuccess.name} returned ${onSuccess()} after ${attempts * delay}ms`);
                 }
@@ -611,12 +632,7 @@
                     attempt();
                 }
                 else {
-                    GM_log('- - - - Maximum attempts reached:');
-                    GM_log(`- - - - - condition: ${condition.name} (currently: ${condition()})`);
-                    GM_log('- - - - - delay per attempt: ' + delay);
-                    GM_log('- - - - - attempts taken: ' + attempts);
-                    GM_log('- - - - - onSuccess: ' + onSuccess.name);
-                    GM_log(`- - - - - onFail: ${onFail ? `${onFail.name} returned ${onFail()}` : 'not defined'}`);
+                    GM_log(`- - - - - onFail: ${onFail ? `${onFail.name} returned ${onFail()}` : 'not defined'} after ${attempts * delay}ms`);
                 }
             }, delay);
         }
@@ -1006,6 +1022,13 @@
                 titlebox.innerText = key;
             }
 
+            function getAccessKey() {
+                // $('#access_key_box td.tdr').text()
+                // return access_key_box.textContent.replace(/\s|Access Key/g, '');
+                // return access_key_box && /\d{5,}[a-z]+/.exec(access_key_box.textContent)[0];
+                return access_key_box.firstElementChild.firstElementChild.firstElementChild.childNodes[3].firstElementChild.innerText;
+            }
+
             let key = $('#access_key_box td.tdr').text();
 
             if (key) {
@@ -1051,24 +1074,23 @@
             return [buttons.length, duration];
         };
 
-        var tabFix = false; // track whether we've added the live lookup button tab fix yet
+        function runLiveLookup() {
+            document.querySelector('a[href^="#livelookup"]').click();
+            waitUntil(
+                function detectLiveLookupButton() {
+                    return document.querySelector('#customer_ajax_ll_inner > div.box_footer > button');
+                }
+                , 20
+                , 100
+                , function clickLiveLookupButton() {
+                    document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
+                }
+            );
+        }
 
-        oneTimeFunctions.tabreset = function() {
-            document.querySelector('a[href^="#livelookup"]').addEventListener('click', function() {
-                waitUntil(
-                    function detectLiveLookupButton() {
-                        return document.querySelector('#customer_ajax_ll_inner > div.box_footer > button');
-                    }
-                    , 190 // ideally, this beats newrequest
-                    , 10
-                    , function setTabFixEvent() {
-                        document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').addEventListener('click', function() {
-                            document.querySelector('a[href^="#customer"]').click();
-                        });
-                        tabFix = true;
-                    }
-                );
-            });
+        intervalFunctions.lookupButton = function() {
+            $('<span id="hsus-lookup"><i class="fad fa-search"></i></span>').insertAfter($('#sUserId'));
+            $('#hsus-lookup').click(runLiveLookup);
         };
 
         oneTimeFunctions.newrequest = function() {
@@ -1090,22 +1112,28 @@
                 let email = document.getElementById('sEmail').value;
                 let pattern = /.+?@(.+\.)?([^\.]+)\.([^\.]+)$/;
                 let match = email.match(pattern);
-                cid.value = match[2] + (match[3] != 'edu' ? '-' + match[2] : '');
+                if (match) {
+                    cid.value = match[2] + (match[3] != 'edu' ? '-' + match[2] : '');
+                    runLiveLookup();
+                }
+            }
+        };
 
-                // run the live lookup
-                document.querySelector('a[href^="#livelookup"]').click();
+        oneTimeFunctions.tabreset = function() {
+            document.querySelector('a[href^="#livelookup"]').addEventListener('click', function() {
                 waitUntil(
                     function detectLiveLookupButton() {
                         return document.querySelector('#customer_ajax_ll_inner > div.box_footer > button');
                     }
-                    , 200
-                    , 10
-                    , function clickLiveLookupButton() {
-                        document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').click();
-                        tabFix = false;
+                    , 19 // ideally, this beats runlivelookup. TODO fix this dumb hack
+                    , 100
+                    , function setTabFixEvent() {
+                        document.querySelector('#customer_ajax_ll_inner > div.box_footer > button').addEventListener('click', function() {
+                            document.querySelector('a[href^="#customer"]').click();
+                        });
                     }
                 );
-            }
+            });
         };
 
         intervalFunctions.reqbuttons = function() {
