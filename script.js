@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.15.07
+// @version      1.15.08
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -1100,8 +1100,8 @@
             }
             let category = document.getElementById('xCategory');
             if (!category.value || category.value == '0') {
-                // default to cat and generate the proper form for this category
-                category.value = 41;
+                // default to CAT Q and generate the proper form for this category
+                category.value = 22;
                 category.onchange.call();
                 // assign back to inbox
                 document.getElementById('xPersonAssignedTo_select').value = '0';
