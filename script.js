@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.15.13
+// @version      1.15.14
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -1047,7 +1047,7 @@
 				return access_key_box.firstElementChild.firstElementChild.firstElementChild.childNodes[3].firstElementChild.innerText;
 			}
 
-			let key = $('#access_key_box td.tdr').text();
+			let key = getAccessKey();
 
 			if (key) {
 				let titlebox = document.querySelector('span.box_title_big');
