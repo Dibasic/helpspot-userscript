@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.15.12
+// @version      1.15.13
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -1260,7 +1260,7 @@
 			});
 			btnHTML += `<span id="giveup" class="hsus-category-button" style="width: 100%">Give Back to INBOX</span>`;
 
-			$('#xCategory').parentElement().append($(btnHTML));
+			$('#request-details-box-top_box_body').prepend($(btnHTML));
 
 			buttons.forEach(function(btn) {
 				$(`#hsus-category-button-${btn.catIndex}`).click(function() {
