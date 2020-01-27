@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.15.11
+// @version      1.15.12
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -1231,7 +1231,7 @@
 			];
 
 			let opts = [];
-			$jq('#xCategory').toArray()[0].childElements().forEach(function(opt) {
+			$('#xCategory').toArray()[0].childElements().forEach(function(opt) {
 				if (opt.nodeName === "OPTGROUP") {
 					opts = opts.concat(opt.childElements());
 				}
