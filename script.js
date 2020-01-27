@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.15.09
+// @version      1.15.11
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -1245,7 +1245,7 @@
 				if (!btn.catIndex) {
 					let suggest;
 					try {
-						opts.filter(o => o.innerText.indexOf(btn.text) > -1)[0].value;
+						suggest = opts.filter(o => o.innerText.indexOf(btn.text) > -1)[0].value;
 					}
 					catch (err) {
 						suggest = -1;
@@ -1256,9 +1256,9 @@
 
 			let btnHTML = '';
 			buttons.forEach(function(btn) {
-				btnHTML += `<span id=hsus-category-button-${btn.catIndex} class="hsus-category-button${btn.class ? ` ${btn.class}` : ''}">${btn.text}</span>`
+				btnHTML += `<span id=hsus-category-button-${btn.catIndex} class="hsus-category-button${btn.class ? ` ${btn.class}` : ''}">${btn.text}</span>`;
 			});
-			btnHTML += `<span id="giveup" class="hsus-category-button" style="width: 100%">Reset to Inbox</span>`
+			btnHTML += `<span id="giveup" class="hsus-category-button" style="width: 100%">Give Back to INBOX</span>`;
 
 			$('#xCategory').parentElement().append($(btnHTML));
 
@@ -1268,6 +1268,11 @@
 					category.value = btn.catIndex;
 					category.onchange.call();
 				});
+			});
+			$('#giveup').click(function() {
+				// assign back to inbox
+				document.getElementById('xPersonAssignedTo_select').value = '0';
+				document.getElementById('xPersonAssignedTo_select').onchange.call();
 			});
 
 			let cid = document.getElementById('sUserId');
