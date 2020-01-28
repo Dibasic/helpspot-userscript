@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.15.14
+// @version      1.15.15
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -314,8 +314,11 @@
 				width: 80% !important;
 			}
 
+			.hsus-category-buttons {
+				display: flex;
+				flex-direction: column;
+			}
 			.hsus-category-button {
-				width: 25%;
 				margin: 2px;
 			}
 			.hsus-category-button-Q {
@@ -1254,11 +1257,12 @@
 				}
 			});
 
-			let btnHTML = '';
+			let btnHTML = '<div id="hsus-category-buttons">';
 			buttons.forEach(function(btn) {
-				btnHTML += `<span id=hsus-category-button-${btn.catIndex} class="hsus-category-button${btn.class ? ` ${btn.class}` : ''}">${btn.text}</span>`;
+				btnHTML += `<span id=hsus-category-button-${btn.catIndex} class="hsus-category-button${btn.class ? ' ' + btn.class : ''}">${btn.text}</span>`;
 			});
 			btnHTML += `<span id="giveup" class="hsus-category-button" style="width: 100%">Give Back to INBOX</span>`;
+			btnHTML += `</div>`;
 
 			$('#request-details-box-top_box_body').prepend($(btnHTML));
 
