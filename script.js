@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HSUS: HelpSpot UserScript
 // @namespace    hsus
-// @version      1.15.15
+// @version      1.15.16
 // @description  HelpSpot form and function
 // @author       Ethan Jorgensen
 // @supportURL   https://github.com/Dibasic/helpspot-userscript/issues
@@ -314,7 +314,7 @@
 				width: 80% !important;
 			}
 
-			.hsus-category-buttons {
+			#hsus-category-buttons {
 				display: flex;
 				flex-direction: column;
 			}
